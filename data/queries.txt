@@ -1,0 +1,9 @@
+SELECT DISTINCT top 1000 dbo.separation(m.ra,m.dec,53.1167,-27.8083) as separation,m.name,m.ra,m.dec,m.err_ellipse_r0,m.err_ellipse_r1,m.err_ellipse_ang,m.significance,m.likelihood_class,m.conf_flag,m.sat_src_flag,m.streak_src_flag,m.flux_aper_b,m.flux_aper_lolim_b,m.flux_aper_hilim_b,m.flux_aper_w,m.flux_aper_lolim_w,m.flux_aper_hilim_w,m.flux_aper_avg_b,m.flux_aper_avg_lolim_b,m.flux_aper_avg_hilim_b,m.flux_aper_avg_w,m.flux_aper_avg_lolim_w,m.flux_aper_avg_hilim_w FROM master_source m WHERE ((( ( m.dec BETWEEN -28.3083 AND -27.3083 ) AND ( m.ra BETWEEN 52.55141744159671 AND 53.68198255840329 ) ) AND dbo.cone_distance(m.ra,m.dec,53.1167,-27.8083)<=30.0)) ORDER BY separation ASC, name ASC
+
+SELECT TOP 5000 gaia_source.source_id,gaia_source.ra,gaia_source.dec,gaia_source.parallax,gaia_source.parallax_error,gaia_source.parallax_over_error,gaia_source.pmra,gaia_source.pmdec,gaia_source.ruwe,gaia_source.phot_g_mean_flux,gaia_source.phot_g_mean_flux_error,gaia_source.phot_g_mean_flux_over_error,gaia_source.phot_g_mean_mag,gaia_source.phot_bp_mean_flux,gaia_source.phot_bp_mean_flux_error,gaia_source.phot_bp_mean_flux_over_error,gaia_source.phot_bp_mean_mag,gaia_source.phot_rp_mean_flux,gaia_source.phot_rp_mean_flux_error,gaia_source.phot_rp_mean_flux_over_error,gaia_source.phot_rp_mean_mag,gaia_source.bp_rp,gaia_source.bp_g,gaia_source.g_rp,gaia_source.radial_velocity,gaia_source.phot_variable_flag,gaia_source.non_single_star,gaia_source.has_xp_continuous,gaia_source.has_xp_sampled,gaia_source.has_rvs,gaia_source.has_epoch_photometry,gaia_source.has_epoch_rv,gaia_source.has_mcmc_gspphot,gaia_source.has_mcmc_msc,gaia_source.teff_gspphot,gaia_source.logg_gspphot,gaia_source.mh_gspphot,gaia_source.distance_gspphot,gaia_source.azero_gspphot,gaia_source.ag_gspphot,gaia_source.ebpminrp_gspphot
+FROM gaiadr3.gaia_source 
+WHERE 
+CONTAINS(
+	POINT('ICRS',gaiadr3.gaia_source.ra,gaiadr3.gaia_source.dec),
+	CIRCLE('ICRS',53.11667,-27.80833,0.5)
+)=1
