@@ -1,0 +1,9 @@
+*.csv
+*.fits
+*.vot
+*.pdf
+
+data/
+out_data/
+models/
+figures/
