@@ -1,11 +1,22 @@
 import numpy as np
 import pandas as pd
 import os
+import sys
+import logging
 
 from src.utils import votable_to_pandas
 from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from astropy import units as u
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def setup_paths():
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return {
+        'out_data': os.path.join(base_path, 'out_data')
+    }
 
 def read_votable_to_dataframe(filepath, columns=None):
     """
@@ -255,10 +266,12 @@ def create_additional_negatives():
     returns:
     - None
     """
+    paths = setup_paths()
+
     # read input CSV files
-    def_last_prob_df = pd.read_csv('out_data/v3/last_prob_class_gaia_props.csv')
-    def_second_prob_df = pd.read_csv('out_data/v3/second_most_prob_class_gaia_props.csv')
-    def_first_prob_df = pd.read_csv('out_data/v3/most_prob_class_gaia_props.csv')
+    def_last_prob_df = pd.read_csv(os.path.join(paths['out_data'], 'last_prob_class_gaia_props.csv'))
+    def_second_prob_df = pd.read_csv(os.path.join(paths['out_data'], 'second_most_prob_class_gaia_props.csv'))
+    def_first_prob_df = pd.read_csv(os.path.join(paths['out_data'], 'most_prob_class_gaia_props.csv'))
 
     additional_negatives = []
 
@@ -306,70 +319,74 @@ def create_additional_negatives():
         additional_negatives.append(combined_row)
 
     additional_negatives_df = pd.DataFrame(additional_negatives)
-    additional_negatives_df.to_csv('out_data/v3/additional_negatives.csv', index=False)
+    additional_negatives_df.to_csv(os.path.join(paths['out_data'], 'additional_negatives.csv'), index=False)
 
 def get_data(separation_thresholds):
     """
     process and filter data, generate df_pos, df_neg for each threshold range.
-
-    parameters:
+    Parameters:
     - separation_thresholds: dict, thresholds for different off-axis ranges
-
-    returns:
+    Returns:
     - results: dict, containing positive and negative datasets for each threshold range
     """
-    
+    paths = setup_paths()
+   
     # read input CSV files
-    def_last_prob_df = pd.read_csv('out_data/v3/last_prob_class_gaia_props.csv')
-    def_first_prob_df = pd.read_csv('out_data/v3/most_prob_class_gaia_props.csv')
-    
+    def_last_prob_df = pd.read_csv(os.path.join(paths['out_data'], 'last_prob_class_gaia_props.csv'))
+    def_first_prob_df = pd.read_csv(os.path.join(paths['out_data'], 'most_prob_class_gaia_props.csv'))
+   
     # extract unique csc21_name values from the first probability dataframe
     chandra_ids_in_first = def_first_prob_df['csc21_name'].unique()
-
-    # filter second and last probability dataframes based on csc21_name values
-    #filtered_second_prob_df = def_second_prob_df[def_second_prob_df['csc21_name'].isin(chandra_ids_in_first)]
+    # filter last probability dataframe based on csc21_name values
     filtered_last_prob_df = def_last_prob_df[def_last_prob_df['csc21_name'].isin(chandra_ids_in_first)]
-
+    
     # apply separation thresholds based on min_theta_mean
     def_first_prob_df['threshold_label'] = pd.cut(
         def_first_prob_df['min_theta_mean'],
         bins=[0, 3, 6, float('inf')],
         labels=['0-3', '3-6', '6+']
     )
-
+    
     # initialize results dictionary
     results = {
         '0-3': {'df_pos': None, 'df_neg': None},
         '3-6': {'df_pos': None, 'df_neg': None},
         '6+': {'df_pos': None, 'df_neg': None}
     }
-
+    
+    # check if additional negatives file exists
+    additional_negatives_file = os.path.join(paths['out_data'], 'additional_negatives.csv')
+    if not os.path.exists(additional_negatives_file):
+        logging.info("Generating additional negatives...")
+        create_additional_negatives()
+    else:
+        logging.info("Additional negatives file found. Loading existing data...")
+    
     # read the additional negatives
-    additional_negatives_df = pd.read_csv('out_data/v3/additional_negatives.csv')
-
+    additional_negatives_df = pd.read_csv(additional_negatives_file)
+    
     # concatenate last_prob with additional negatives
     combined_last_prob_df = pd.concat([filtered_last_prob_df, additional_negatives_df], ignore_index=True)
-
+    
     # process each threshold range
     for label in results.keys():
         threshold = separation_thresholds[label]
-        
+       
         # filter positive cases
         df_pos = def_first_prob_df.query(
             f'threshold_label == "{label}" and separation <= {threshold}'
         )
         chandra_ids_in_pos = df_pos['csc21_name'].unique()
-
+        
         # filter negative cases
         df_neg = combined_last_prob_df[combined_last_prob_df['csc21_name'].isin(chandra_ids_in_pos)]
-
         df_pos.sort_values('csc21_name', inplace=True)
         df_neg.sort_values('csc21_name', inplace=True)
-
+        
         # store positive and negative sets
         results[label]['df_pos'] = df_pos
         results[label]['df_neg'] = df_neg
-
+    
     return results
 
     # replace zero flux values with NaN

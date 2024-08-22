@@ -7,8 +7,7 @@ dependencies:
   - scikit-learn=1.4
   - numpy
   - matplotlib
-  - tensorflow
   - seaborn
   - astropy
-  - py-xgboost
-prefix: /home/ubunsam/miniconda3/envs/starsml
+  - python=3.9
+prefix: /scratch1/vdiaz/.conda/envs/starsml
