@@ -7,11 +7,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import accuracy_score, classification_report
 from sklearn.preprocessing import OneHotEncoder
+import lightgbm as lgb
 
 import os
 import joblib
 import json
 from datetime import datetime
+
+import pandas as pd
 
 # Global variables
 FEATURE_NAMES = [
@@ -34,79 +37,99 @@ def create_new_columns(df):
     
     return df
 
-def transform_features(df, log_transform, feature_names=FEATURE_NAMES):
+def transform_features(df, log_transform, model_type='rf', feature_names=FEATURE_NAMES):
     """
-    transform features with optional log transformation and encode categorical features.
+    transform features with optional log transformation and handle categorical features.
 
     parameters:
     - df: pd.DataFrame, the input dataframe
     - log_transform: bool, whether to apply log transformation or not
+    - model_type: str, 'rf' for Random Forest or 'lgbm' for LightGBM
     - feature_names: list, optional, list of feature names to use
 
     returns:
-    - transformed_features: np.array, transformed features
+    - transformed_features: np.array or pd.DataFrame, transformed features
+    - categorical_features: list, names of categorical features (for LightGBM)
     """
-
     create_new_columns(df)
-
     # identify categorical features
     categorical_features = ['yangetal_gcs_class', 'yangetal_training_class', 'perezdiazetal_class', 'phot_variable_flag']
     categorical_features = [feature for feature in categorical_features if feature in feature_names]
-    
-    # encode categorical features
-    if categorical_features:
-        encoder = OneHotEncoder(sparse_output=False)
-        encoded_categorical = encoder.fit_transform(df[categorical_features])
+   
+    # handle categorical features
+    if model_type == 'rf':
+        # one-hot encode for Random Forest
+        if categorical_features:
+            encoder = OneHotEncoder(sparse_output=False)
+            encoded_categorical = encoder.fit_transform(df[categorical_features])
+            encoded_feature_names = encoder.get_feature_names_out(categorical_features)
+        else:
+            encoded_categorical = np.array([]).reshape(len(df), 0)
+            encoded_feature_names = []
+    elif model_type == 'lgbm':
+        # for lgbm, we'll keep categorical features as they are
+        encoded_categorical = df[categorical_features].values
+        encoded_feature_names = categorical_features
     else:
-        encoded_categorical = np.array([]).reshape(len(df), 0)
-    
+        raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
+   
     # handle log transformation and numerical features
+    numerical_features = [feature for feature in feature_names if feature not in categorical_features]
     transformed_numerical_features = [
         np.log10(1 + df[feature].values) if log_transform and feature in LOG_TRANSFORM_FEATURES else df[feature].values
-        for feature in feature_names if feature not in categorical_features
+        for feature in numerical_features
     ]
-    
-    # concatenate encoded categorical features with numerical features
-    transformed_features = np.concatenate([np.array(transformed_numerical_features).T, encoded_categorical], axis=1)
-    
-    return transformed_features
+   
+    # combine numerical and categorical features
+    if model_type == 'rf':
+        transformed_features = np.concatenate([np.array(transformed_numerical_features).T, encoded_categorical], axis=1)
+        all_feature_names = numerical_features + list(encoded_feature_names)
+        return pd.DataFrame(transformed_features, columns=all_feature_names), []
+    elif model_type == 'lgbm':
+        numerical_df = pd.DataFrame(np.array(transformed_numerical_features).T, columns=numerical_features)
+        categorical_df = pd.DataFrame(encoded_categorical, columns=encoded_feature_names)
+        return pd.concat([numerical_df, categorical_df], axis=1), categorical_features
 
-def preprocess(df_pos, df_neg, log_transform=True, random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
+def preprocess(df_pos, df_neg, log_transform=True, model_type='rf', random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
     """
     preprocess dataframes with optional log transformation and split into training and test sets.
-
     parameters:
     - df_pos: pd.DataFrame, dataframe of positive samples
     - df_neg: pd.DataFrame, dataframe of negative samples
     - log_transform: bool, whether to apply log transformation or not
+    - model_type: str, 'rf' for Random Forest or 'lgbm' for LightGBM
     - random_seed: int, random seed for reproducibility
     - test_size: float, proportion of the dataset to include in the test split
-
     returns:
-    - X_train: np.array, training features
-    - X_test: np.array, test features
+    - X_train: pd.DataFrame, training features
+    - X_test: pd.DataFrame, test features
     - Y_train: np.array, training labels
     - Y_test: np.array, test labels
     - indices_train: np.array, indices of training samples
     - indices_test: np.array, indices of test samples
+    - categorical_features: list, names of categorical features (for LightGBM)
     """
     # transform features
-    X_pos = transform_features(df_pos, log_transform, feature_names)
-    X_neg = transform_features(df_neg, log_transform, feature_names)
-
-    # concatenate X and create Y labels
-    X = np.concatenate((X_pos, X_neg), axis=0)
+    X_pos, cat_features_pos = transform_features(df_pos, log_transform, model_type, feature_names)
+    X_neg, cat_features_neg = transform_features(df_neg, log_transform, model_type, feature_names)
+    
+    # ensure categorical features are consistent
+    assert cat_features_pos == cat_features_neg, "Categorical features mismatch between positive and negative samples"
+    categorical_features = cat_features_pos
+    
+    # concat X and create Y labels
+    X = pd.concat([X_pos, X_neg], axis=0, ignore_index=True)
     Y = np.concatenate((np.ones(len(X_pos)), np.zeros(len(X_neg))), axis=0)
-
+    
     # create indices
     indices = np.arange(X.shape[0])
-
+    
     # split into training and test sets
     X_train, X_test, Y_train, Y_test, indices_train, indices_test = train_test_split(
         X, Y, indices, test_size=test_size, shuffle=True, random_state=random_seed
     )
-
-    return X_train, X_test, Y_train, Y_test, indices_train, indices_test
+    
+    return X_train, X_test, Y_train, Y_test, indices_train, indices_test, categorical_features
 
 
 def handle_missing_values(X_train, X_test):
@@ -130,15 +153,16 @@ def votable_to_pandas(votable_file):
     table = votable.get_first_table().to_table(use_names_over_ids=True)
     return table.to_pandas()
 
-def train_and_tune_model(X_train, X_test, Y_train, Y_test, model_type='rf', hyperparameter_tuning=True, random_seed=42):
+def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=None, model_type='rf', hyperparameter_tuning=True, random_seed=42):
     """
     train and tune a model based on the given splits and model type.
 
     parameters:
-    - X_train: np.array, training features
-    - X_test: np.array, test features
+    - X_train: pd.DataFrame, training features
+    - X_test: pd.DataFrame, test features
     - Y_train: np.array, training labels
     - Y_test: np.array, test labels
+    - categorical_features: list, names of categorical features (for LightGBM)
     - model_type: str, either "rf" for Random Forest or "lgbm" for LightGBM
     - hyperparameter_tuning: bool, whether to perform hyperparameter tuning or not
     - random_seed: int, random seed for reproducibility
@@ -163,30 +187,33 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, model_type='rf', hype
             'min_samples_leaf': 1
         }
     elif model_type == 'lgbm':
-        # placeholder
-        model = None
+        model = lgb.LGBMClassifier(random_state=random_seed)
+        if categorical_features:
+            model.set_params(categorical_feature=categorical_features)
         param_grid = {
-            'num_leaves': [31, 50, 100],
-            'max_depth': [-1, 10, 20, 30],
-            'learning_rate': [0.01, 0.05, 0.1, 0.2],
-            'n_estimators': [100, 200, 300],
-            'min_child_samples': [20, 30, 40]
+            'num_leaves': [31, 63, 127],
+            'max_depth': [-1, 5, 10, 15],
+            'learning_rate': [0.01, 0.05, 0.1],
+            'n_estimators': [100, 300, 500],
+            'min_child_samples': [20, 50, 100],
+            'subsample': [0.6, 0.8, 1.0],
+            'colsample_bytree': [0.6, 0.8, 1.0]
         }
         default_params = {
             'num_leaves': 31,
             'max_depth': -1,
             'learning_rate': 0.1,
             'n_estimators': 100,
-            'min_child_samples': 20
+            'min_child_samples': 20,
+            'subsample': 1.0,
+            'colsample_bytree': 1.0
         }
-        print("LightGBM model is not implemented yet.")
-        return None, None, None
     else:
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
 
     if hyperparameter_tuning:
         print("Performing hyperparameter tuning...")
-        search = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=10, cv=5, n_jobs=-1, verbose=2, scoring='accuracy', random_state=random_seed)
+        search = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=20, cv=5, n_jobs=-1, verbose=2, scoring='accuracy', random_state=random_seed)
         search.fit(X_train, Y_train)
         best_model = search.best_estimator_
         best_params = search.best_params_
@@ -197,6 +224,7 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, model_type='rf', hype
         best_model = model
         best_model.fit(X_train, Y_train)
         best_params = default_params
+
     # preds
     y_pred = best_model.predict(X_test)
 

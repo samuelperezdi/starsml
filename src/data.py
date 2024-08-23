@@ -407,13 +407,14 @@ def read_data(separation_thresholds):
     returns:
     - results: dict, containing positive and negative datasets for each threshold range
     """
+    paths = setup_paths()
+    os.makedirs(paths['out_data'], exist_ok=True)
+
     results = {key: {'df_pos': None, 'df_neg': None} for key in separation_thresholds.keys()}
 
     # read the data from csv files
     for key in separation_thresholds.keys():
-        formatted_key = key.replace('-', '_')
-        formatted_key = formatted_key.replace('+', '_plus')
-        results[key]['df_pos'] = pd.read_csv(f'out_data/v3/df_pos_{formatted_key}.csv')
-        results[key]['df_neg'] = pd.read_csv(f'out_data/v3/df_neg_{formatted_key}.csv')
+        results[key]['df_pos'] = pd.read_csv(os.path.join(paths['out_data'], f'df_pos_{key}.csv'))
+        results[key]['df_neg'] = pd.read_csv(os.path.join(paths['out_data'], f'df_neg_{key}.csv'))
 
     return results

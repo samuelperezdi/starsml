@@ -95,10 +95,10 @@ def main(test_mode=False):
         
         classifications = load_classifications(paths['data'])
         
-        for df, name in zip([prepared_most_probable, prepared_second_prob, prepared_last_prob], 
-                            ['most_prob', 'second_most_prob', 'last_prob']):
-            df_with_class = add_classifications(df, classifications)
-            df_with_class.to_csv(os.path.join(paths['out_data'], f'{name}_class.csv'), index=False)
+        # for df, name in zip([prepared_most_probable, prepared_second_prob, prepared_last_prob], 
+        #                     ['most_prob', 'second_most_prob', 'last_prob']):
+        #     df_with_class = add_classifications(df, classifications)
+        #     df_with_class.to_csv(os.path.join(paths['out_data'], f'{name}_class.csv'), index=False)
         
         # load and process gaia data
         gaia_props = read_gzipped_votable_to_dataframe(os.path.join(paths['data'], 'additional_gaia_properties-result.vot.gz'))
@@ -112,7 +112,8 @@ def main(test_mode=False):
         
         for df, name in zip([prepared_most_probable, prepared_second_prob, prepared_last_prob], 
                             ['most_prob', 'second_most_prob', 'last_prob']):
-            df_with_gaia = process_gaia_data(df, gaia_selected_props)
+            df_with_class = add_classifications(df, classifications)
+            df_with_gaia = process_gaia_data(df_with_class, gaia_selected_props)
             df_with_gaia.to_csv(os.path.join(paths['out_data'], f'{name}_class_gaia_props.csv'), index=False)
         
         logging.info(f"data processing completed successfully in {'test' if test_mode else 'full'} mode.")
