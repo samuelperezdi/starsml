@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, QuantileTransformer, PowerTransformer
 from astropy.io.votable import parse
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
@@ -74,7 +74,7 @@ def transform_features(df, log_transform, model_type='rf', feature_names=FEATURE
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
    
     # handle log transformation and numerical features
-    numerical_features = [feature for feature in feature_names if feature not in categorical_features]
+    numerical_features = [f for f in feature_names if f not in categorical_features]
     transformed_numerical_features = [
         np.log10(1 + df[feature].values) if log_transform and feature in LOG_TRANSFORM_FEATURES else df[feature].values
         for feature in numerical_features
@@ -88,9 +88,11 @@ def transform_features(df, log_transform, model_type='rf', feature_names=FEATURE
     elif model_type == 'lgbm':
         numerical_df = pd.DataFrame(np.array(transformed_numerical_features).T, columns=numerical_features)
         categorical_df = pd.DataFrame(encoded_categorical, columns=encoded_feature_names)
+        for c in encoded_feature_names:
+            categorical_df[c] = categorical_df[c].astype('category')
         return pd.concat([numerical_df, categorical_df], axis=1), categorical_features
 
-def preprocess(df_pos, df_neg, log_transform=True, model_type='rf', random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
+def preprocess(df_pos, df_neg,  normalization_method='none', log_transform=False, model_type='rf', random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
     """
     preprocess dataframes with optional log transformation and split into training and test sets.
     parameters:
@@ -129,7 +131,10 @@ def preprocess(df_pos, df_neg, log_transform=True, model_type='rf', random_seed=
         X, Y, indices, test_size=test_size, shuffle=True, random_state=random_seed
     )
     
-    return X_train, X_test, Y_train, Y_test, indices_train, indices_test, categorical_features
+    X_train_norm, X_test_norm, scaler = normalize_train_test(X_train, X_test, method=normalization_method, categorical_features=categorical_features)
+    
+    return X_train_norm, X_test_norm, Y_train, Y_test, indices_train, indices_test, categorical_features, scaler
+
 
 
 def handle_missing_values(X_train, X_test):
@@ -138,10 +143,30 @@ def handle_missing_values(X_train, X_test):
     X_test = imp_mean.transform(X_test)
     return X_train, X_test, imp_mean
 
-def standardize(X_train, X_test):
-    scaler = StandardScaler()
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.transform(X_test)
+def normalize_train_test(X_train, X_test, method='standard', categorical_features=[]):
+    numerical_features = [col for col in X_train.columns if col not in categorical_features]
+    
+    if method == 'standard':
+        scaler = StandardScaler()
+    elif method == 'minmax':
+        scaler = MinMaxScaler()
+    elif method == 'robust':
+        scaler = RobustScaler()
+    elif method == 'quantile':
+        scaler = QuantileTransformer(output_distribution='normal')
+    elif method == 'power':
+        scaler = PowerTransformer(method='yeo-johnson')
+    elif method == 'none':
+        return X_train, X_test, None
+    else:
+        raise ValueError("Unsupported normalization method")
+    
+    X_train_scaled = X_train.copy()
+    X_test_scaled = X_test.copy()
+    
+    X_train_scaled[numerical_features] = scaler.fit_transform(X_train[numerical_features])
+    X_test_scaled[numerical_features] = scaler.transform(X_test[numerical_features])
+    
     return X_train_scaled, X_test_scaled, scaler
 
 
@@ -156,7 +181,6 @@ def votable_to_pandas(votable_file):
 def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=None, model_type='rf', hyperparameter_tuning=True, random_seed=42):
     """
     train and tune a model based on the given splits and model type.
-
     parameters:
     - X_train: pd.DataFrame, training features
     - X_test: pd.DataFrame, test features
@@ -166,7 +190,6 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
     - model_type: str, either "rf" for Random Forest or "lgbm" for LightGBM
     - hyperparameter_tuning: bool, whether to perform hyperparameter tuning or not
     - random_seed: int, random seed for reproducibility
-
     returns:
     - best_model: trained model
     - y_pred: np.array, predictions on the test set
@@ -189,6 +212,9 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
     elif model_type == 'lgbm':
         model = lgb.LGBMClassifier(random_state=random_seed)
         if categorical_features:
+            for c in categorical_features:
+                X_train[c] = X_train[c].astype('category')
+                X_test[c] = X_test[c].astype('category')
             model.set_params(categorical_feature=categorical_features)
         param_grid = {
             'num_leaves': [31, 63, 127],
@@ -200,13 +226,13 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
             'colsample_bytree': [0.6, 0.8, 1.0]
         }
         default_params = {
-            'num_leaves': 31,
-            'max_depth': -1,
-            'learning_rate': 0.1,
-            'n_estimators': 100,
-            'min_child_samples': 20,
-            'subsample': 1.0,
-            'colsample_bytree': 1.0
+            'num_leaves': 127,
+            'max_depth': 15,
+            'learning_rate': 0.01,
+            'n_estimators': 500,
+            'min_child_samples': 100,
+            'subsample': 0.8,
+            'colsample_bytree': 0.8
         }
     else:
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
@@ -252,6 +278,12 @@ def prepare_feature_subset(df, subset_type):
     variability = ['var_intra_prob_b', 'var_inter_prob_b', 'var_inter_sigma_b']
     categories = ['var_intra_index_b', 'var_inter_index_b', 'phot_variable_flag', 'yangetal_gcs_class', 'yangetal_training_class', 'perezdiazetal_class']
 
+    # additional features
+    additional_features = [
+        'extent_flag', 'photflux_aper_b', 
+        'classprob_dsc_combmod_quasar', 'classprob_dsc_combmod_galaxy', 'classprob_dsc_combmod_star'
+    ]
+
     if subset_type == 1:
         selected_features = base_features
     elif subset_type == 2:
@@ -272,13 +304,29 @@ def prepare_feature_subset(df, subset_type):
         selected_features = base_features + magnitudes + categories
     elif subset_type == 8:
         selected_features = base_features + magnitudes + fluxes + variability + categories
+    elif subset_type == 9:
+        # verify
+        all_subset_features = base_features + magnitudes + fluxes + variability + categories + additional_features
+        assert set(FEATURE_NAMES) == set(all_subset_features), "Some features are missing or extra features are present"
+        selected_features = all_subset_features
+    elif subset_type == 10:
+        # verify
+        all_subset_features = base_features + magnitudes + fluxes + variability + categories + additional_features
+        assert set(FEATURE_NAMES) == set(all_subset_features), "Some features are missing or extra features are present"
+        features_to_remove =  ['vbroad', 'radial_velocity', 'extent_flag', 'distance_gspphot', 'perezdiazetal_class', 'var_inter_index_b', 'var_intra_index_b',  'yangetal_training_class']
+        selected_features = [feature for feature in all_subset_features if feature not in features_to_remove]
+    elif subset_type == 11:
+        all_subset_features = base_features + magnitudes + fluxes + variability + categories + additional_features
+        assert set(FEATURE_NAMES) == set(all_subset_features), "Some features are missing or extra features are present"
+        features_to_remove =  ['vbroad', 'radial_velocity', 'extent_flag', 'var_inter_index_b', 'var_intra_index_b', 'classprob_dsc_combmod_quasar', 'classprob_dsc_combmod_galaxy', 'classprob_dsc_combmod_star', 'distance_gspphot', 'perezdiazetal_class', 'yangetal_gcs_class',  'yangetal_training_class']
+        selected_features = [feature for feature in all_subset_features if feature not in features_to_remove] 
     else:
         raise ValueError("Unsupported subset type.")
-
+    
     return df[selected_features]
 
 
-def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False, random_seed=42):
+def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False, log_transform=False, normalization_method='none', random_seed=42):
     """
     run experiments for different subsets of features.
 
@@ -287,6 +335,8 @@ def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False
     - df_neg: pd.DataFrame, negative samples
     - model_type: str, either "rf" for Random Forest or "lgbm" for LightGBM
     - hyperparameter_tuning: bool, whether to perform hyperparameter tuning or not
+    - log_transform: bool, whether to apply log transformation to applicable features
+    - normalization_method: str, method for normalizing features ('standard', 'minmax', 'robust', 'quantile', or 'power')
     - random_seed: int, random seed for reproducibility
 
     returns:
@@ -294,7 +344,7 @@ def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False
     """
     results = {}
 
-    for subset_type in range(6, 9):
+    for subset_type in range(11, 12):
         print(f"Running subset type {subset_type}...")
 
         create_new_columns(df_pos)
@@ -305,37 +355,52 @@ def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False
         df_neg_subset = prepare_feature_subset(df_neg, subset_type)
 
         # preprocess
-        X_train, X_test, Y_train, Y_test, indices_train, indices_test = preprocess(df_pos_subset, df_neg_subset, log_transform=False, random_seed=random_seed, feature_names=df_pos_subset.columns)
+        X_train, X_test, Y_train, Y_test, indices_train, indices_test, categorical_features, scaler = preprocess(
+            df_pos_subset, df_neg_subset, 
+            log_transform=log_transform, 
+            normalization_method=normalization_method, 
+            model_type=model_type, 
+            random_seed=random_seed, 
+            feature_names=df_pos_subset.columns
+        )
 
         # train
-        best_model, y_pred, best_params = train_and_tune_model(X_train, X_test, Y_train, Y_test, model_type=model_type, hyperparameter_tuning=hyperparameter_tuning, random_seed=random_seed)
+        best_model, y_pred, best_params = train_and_tune_model(
+            X_train, X_test, Y_train, Y_test, 
+            categorical_features, 
+            model_type=model_type, 
+            hyperparameter_tuning=hyperparameter_tuning, 
+            random_seed=random_seed
+        )
 
         results[subset_type] = {
             'best_model': best_model,
             'best_params': best_params,
             'y_pred': y_pred,
-            'indices_test': indices_test
+            'indices_test': indices_test,
+            'scaler': scaler
         }
 
     return results
 
-def save_experiment_results(results, model_type, hyperparameter_tuning, random_seed):
+def save_experiment_results(results, model_type, hyperparameter_tuning, log_transform, normalization_method, random_seed):
     """
     save all info returned by run_experiments in a new folder
-
     parameters:
     - results: dict, containing results for all subsets
     - model_type: str, either "rf" for Random Forest or "lgbm" for LightGBM
     - hyperparameter_tuning: bool, whether hyperparameter tuning was performed
+    - log_transform: bool, whether log transformation was applied
+    - normalization_method: str, method used for normalizing features
     - random_seed: int, random seed used for reproducibility
-
     returns:
     - experiment_path: str, path to the saved experiment folder
     """
     # create experiment name
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     tuning_str = "tuned" if hyperparameter_tuning else "default"
-    experiment_name = f"{model_type}_{tuning_str}_seed{random_seed}_{timestamp}"
+    log_str = "log" if log_transform else "nolog"
+    experiment_name = f"{model_type}_{tuning_str}_{log_str}_{normalization_method}_seed{random_seed}_{timestamp}"
 
     # create folder
     base_path = "models"
@@ -364,7 +429,23 @@ def save_experiment_results(results, model_type, hyperparameter_tuning, random_s
         indices_path = os.path.join(subset_path, "test_indices.joblib")
         joblib.dump(subset_results['indices_test'], indices_path)
 
-    print(f"experiment results saved in: {experiment_path}")
+        # save scaler
+        scaler_path = os.path.join(subset_path, "scaler.joblib")
+        joblib.dump(subset_results['scaler'], scaler_path)
+
+    # save experiment configuration
+    config = {
+        'model_type': model_type,
+        'hyperparameter_tuning': hyperparameter_tuning,
+        'log_transform': log_transform,
+        'normalization_method': normalization_method,
+        'random_seed': random_seed
+    }
+    config_path = os.path.join(experiment_path, "experiment_config.json")
+    with open(config_path, 'w') as f:
+        json.dump(config, f, indent=2)
+
+    print(f"Experiment results saved in: {experiment_path}")
     return experiment_path
 
 def load_experiment_results(experiment_path):
@@ -382,14 +463,15 @@ def load_experiment_results(experiment_path):
     
     # extract experiment info from path
     experiment_name = os.path.basename(experiment_path)
-    model_type, tuning_str, seed_info, timestamp = experiment_name.split('_', 3)
+    model_type, tuning_str, log_str, norm_method, seed_info, timestamp = experiment_name.split('_', 5)
     hyperparameter_tuning = tuning_str == "tuned"
-    random_seed = int(seed_info[4:])  # remove "seed" prefix
     
     experiment_info = {
         'model_type': model_type,
         'hyperparameter_tuning': hyperparameter_tuning,
-        'random_seed': random_seed,
+        'log_transform': log_str == "log",
+        'normalization_method': norm_method,
+        'random_seed': int(seed_info[4:]),  # remove "seed" prefix
         'timestamp': timestamp
     }
 
@@ -425,3 +507,92 @@ def load_experiment_results(experiment_path):
     
     print(f"experiment results loaded from: {experiment_path}")
     return results, experiment_info
+
+def load_model(model_path):
+    """
+    load a single model and its associated information.
+
+    params:
+    - model_path: str, path to the saved model file (.joblib)
+
+    returns:
+    - model_info: dict, containing the loaded model and associated information
+    """
+    model_dir = os.path.dirname(model_path)
+    subset_dir = os.path.dirname(model_dir)
+    experiment_dir = os.path.dirname(subset_dir)
+
+    # load model
+    model = joblib.load(model_path)
+
+    # load best parameters
+    params_path = os.path.join(model_dir, "best_params.json")
+    with open(params_path, 'r') as f:
+        best_params = json.load(f)
+
+    # extract experiment info from path
+    experiment_name = os.path.basename(subset_dir)
+    print(subset_dir)
+    model_type, tuning_str, log_str, norm_method, seed_info, timestamp = experiment_name.split('_', 5)
+
+    experiment_info = {
+        'model_type': model_type,
+        'hyperparameter_tuning': tuning_str == "tuned",
+        'log_transform': log_str == "log",
+        'normalization_method': norm_method,
+        'random_seed': int(seed_info[4:]),  # remove "seed" prefix
+        'timestamp': timestamp
+    }
+
+    # extract subset type
+    subset_type = int(os.path.basename(model_dir).split("_")[1])
+
+    model_info = {
+        'model': model,
+        'best_params': best_params,
+        'experiment_info': experiment_info,
+        'subset_type': subset_type
+    }
+
+    print(f"Model loaded from: {model_path}")
+    return model_info
+
+def remove_duplicate_columns(df):
+    """
+    remove duplicate columns that have '_x' or '_y' suffixes resulting from merging,
+    and remove these suffixes from the remaining columns.
+    
+    Args:
+    df (pd.DataFrame): Input DataFrame
+    
+    Returns:
+    pd.DataFrame: DataFrame with duplicate columns removed and suffixes stripped
+    """
+    # get list of columns
+    columns = df.columns.tolist()
+    
+    # identify base names of columns (without _x or _y suffix)
+    base_names = set(col.rsplit('_', 1)[0] for col in columns if col.endswith(('_x', '_y')))
+    
+    # columns to drop and rename
+    to_drop = []
+    to_rename = {}
+    
+    for base in base_names:
+        variants = [col for col in columns if col.startswith(base) and col.endswith(('_x', '_y'))]
+        if len(variants) > 1:
+            # keep _x variant and rename it
+            keep_col = next(col for col in variants if col.endswith('_x'))
+            to_rename[keep_col] = base
+            to_drop.extend([col for col in variants if col != keep_col])
+        elif len(variants) == 1:
+            # if only one variant exists, just rename it
+            to_rename[variants[0]] = base
+    
+    # drop identified columns
+    df = df.drop(columns=to_drop)
+    
+    # rename columns (remove suffixes)
+    df = df.rename(columns=to_rename)
+    
+    return df

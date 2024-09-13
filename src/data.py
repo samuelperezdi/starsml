@@ -119,18 +119,24 @@ def prepare_final_dataset(df_nway, df_csc):
     Returns:
     - pd.DataFrame, the merged dataset with columns in the specified order
     """
-    df_nway['CSC21_CSCID'] = df_nway['CSC21_CSCID'].str.replace('_', ' ')
-    df_nway['CSC21_CSCID'] = df_nway['CSC21_CSCID'].str.strip()
+    df_nway['csc21_name'] = df_nway['csc21_name'].str.replace('_', ' ')
+    df_nway['csc21_name'] = df_nway['csc21_name'].str.strip()
     df_csc['name'] = df_csc['name'].str.strip()
-    merged_df = df_nway.merge(df_csc, left_on='CSC21_CSCID', right_on='name', how='left')
+    merged_df = df_nway.merge(df_csc, left_on='csc21_name', right_on='name', how='left')
 
     columns_mapping = {
         'CSC21_CSCID': 'csc21_name',
         'CSC21_RA': 'csc21_ra',
         'CSC21_Dec': 'csc21_dec',
+        'CSC21_Errmaj' : 'csc21_errmaj',
+        'CSC21_Errmin' : 'csc21_errmin',
+        'CSC21_ErrPA' : 'csc21_errpa',
         'GAIA3_source_id': 'gaia3_source_id',
         'GAIA3_ra': 'gaia3_ra',
         'GAIA3_dec': 'gaia3_dec',
+        'GAIA3_era' : 'gaia3_era',
+        'GAIA3_edec' : 'gaia3_edec',
+        'GAIA3_epa' : 'gaia3_epa',
         'GAIA3_phot_g_mean_mag': 'phot_g_mean_mag',
         'GAIA3_phot_bp_mean_mag': 'phot_bp_mean_mag',
         'GAIA3_phot_rp_mean_mag': 'phot_rp_mean_mag',
@@ -147,9 +153,10 @@ def prepare_final_dataset(df_nway, df_csc):
 
     # final columns
     final_features = [
-        'csc21_name', 'csc21_ra', 'csc21_dec', 'gaia3_source_id', 'gaia3_ra', 'gaia3_dec', 
-        'phot_g_mean_mag', 'phot_bp_mean_mag', 'phot_rp_mean_mag', 'bp_rp', 'bp_g', 'g_rp', 
-        'parallax', 'parallax_over_error', 
+        'csc21_name', 'csc21_ra', 'csc21_dec',
+        'csc21_errmaj',
+        'csc21_errmin',
+        'csc21_errpa',
         'hard_hs',
         'hard_hm',
         'hard_hm_lolim',
@@ -171,6 +178,21 @@ def prepare_final_dataset(df_nway, df_csc):
         'photflux_aper_lolim_b',
         'acis_time', 
         'min_theta_mean',
+        'yangetal_gcs_class',
+        'yangetal_training_class',
+        'perezdiazetal_class',
+        #
+        'gaia3_source_id', 'gaia3_ra', 'gaia3_dec', 
+        'gaia3_era', 'gaia3_edec', 'gaia3_epa',
+        'phot_g_mean_mag', 'phot_bp_mean_mag', 'phot_rp_mean_mag', 'bp_rp', 'bp_g', 'g_rp', 
+        'parallax', 'parallax_error', 'parallax_over_error', 
+        'pmra', 'pmra_error', 'pmdec', 'pmdec_error',
+        'phot_g_mean_flux', 'phot_g_mean_flux_error', 'phot_bp_mean_flux',
+        'phot_bp_mean_flux_error', 'phot_rp_mean_flux', 'phot_rp_mean_flux_error',
+        'radial_velocity', 'radial_velocity_error', 'vbroad', 'vbroad_error',
+        'phot_variable_flag', 'classprob_dsc_combmod_quasar', 'classprob_dsc_combmod_galaxy',
+        'classprob_dsc_combmod_star', 'distance_gspphot', 'distance_gspphot_lower',
+        'distance_gspphot_upper',
         'separation', 
         'dist_bayesfactor', 
         'dist_post', 

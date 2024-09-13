@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, results_info, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 32, in plot_subsets_experiment_wandb
+    y_test_prob = best_model.predict_proba(X_test)[:, 1]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/sklearn.py", line 922, in predict_proba
+    result = super(LGBMClassifier, self).predict(X, raw_score, start_iteration, num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/sklearn.py", line 687, in predict
+    return self._Booster.predict(X, raw_score=raw_score, start_iteration=start_iteration, num_iteration=num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 2957, in predict
+    return predictor.predict(data, start_iteration, num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 556, in predict
+    data = _data_from_pandas(data, None, None, self.pandas_categorical)[0]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 377, in _data_from_pandas
+    raise ValueError('train and valid dataset categorical_feature do not match.')
+ValueError: train and valid dataset categorical_feature do not match.
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, results_info, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 32, in plot_subsets_experiment_wandb
+    y_test_prob = best_model.predict_proba(X_test)[:, 1]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/sklearn.py", line 922, in predict_proba
+    result = super(LGBMClassifier, self).predict(X, raw_score, start_iteration, num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/sklearn.py", line 687, in predict
+    return self._Booster.predict(X, raw_score=raw_score, start_iteration=start_iteration, num_iteration=num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 2957, in predict
+    return predictor.predict(data, start_iteration, num_iteration,
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 556, in predict
+    data = _data_from_pandas(data, None, None, self.pandas_categorical)[0]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/lightgbm/basic.py", line 377, in _data_from_pandas
+    raise ValueError('train and valid dataset categorical_feature do not match.')
+ValueError: train and valid dataset categorical_feature do not match.
