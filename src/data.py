@@ -9,8 +9,13 @@ from astropy.table import Table
 from astropy.coordinates import SkyCoord
 from astropy import units as u
 
+from astropy.coordinates import Angle
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s'
+)
 
 def setup_paths():
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -419,7 +424,7 @@ def get_data(separation_thresholds):
     #df_pos['gmag_logflux'] = df_pos['phot_g_mean_mag'] + np.log10(df_pos['flux_aper_b'] / 1e-13) * 2.5
     #df_neg['gmag_logflux'] = df_neg['phot_g_mean_mag'] + np.log10(df_neg['flux_aper_b'] / 1e-13) * 2.5
 
-def read_data(separation_thresholds):
+def read_data(separation_thresholds, folder='', suffix=''):
     """
     read saved positive and negative datasets for each threshold range from csv files.
 
@@ -431,12 +436,172 @@ def read_data(separation_thresholds):
     """
     paths = setup_paths()
     os.makedirs(paths['out_data'], exist_ok=True)
+    output_path = paths['out_data']
+    if folder:
+        output_path = os.path.join(paths['out_data'], f'{folder}')
 
     results = {key: {'df_pos': None, 'df_neg': None} for key in separation_thresholds.keys()}
 
     # read the data from csv files
     for key in separation_thresholds.keys():
-        results[key]['df_pos'] = pd.read_csv(os.path.join(paths['out_data'], f'df_pos_{key}.csv'))
-        results[key]['df_neg'] = pd.read_csv(os.path.join(paths['out_data'], f'df_neg_{key}.csv'))
+        results[key]['df_pos'] = pd.read_parquet(os.path.join(output_path, f'df_pos_{key}{suffix}.parquet'))
+        results[key]['df_neg'] = pd.read_parquet(os.path.join(output_path, f'df_neg_{key}{suffix}.parquet'))
 
     return results
+
+
+def create_hashes(df, features_to_hash, num_bins, method='bin_hash'):
+    if method == 'all':
+        return pd.Series(['all'] * len(df), index=df.index)
+    
+    def create_bin_edges(series, num_bins):
+        min_val, max_val = series.min(), series.max()
+        return np.linspace(min_val, max_val, num_bins + 1)
+
+    def assign_to_bin(value, bin_edges):
+        return np.digitize(value, bin_edges) - 1
+
+    feature_bins = {}
+    categorical_mappings = {}
+    for feature in features_to_hash:
+        if pd.api.types.is_numeric_dtype(df[feature]):
+            feature_bins[feature] = create_bin_edges(df[feature], num_bins)
+        else:
+            unique_values = df[feature].unique()
+            categorical_mappings[feature] = {val: i % num_bins for i, val in enumerate(unique_values)}
+
+    def create_bin_id(row):
+        bin_ids = []
+        for feature in features_to_hash:
+            if pd.api.types.is_numeric_dtype(df[feature]):
+                bin_id = assign_to_bin(row[feature], feature_bins[feature])
+            else:
+                bin_id = categorical_mappings[feature].get(row[feature], num_bins - 1)
+            bin_ids.append(str(bin_id).zfill(2))
+        return ''.join(bin_ids)
+
+    return df.apply(create_bin_id, axis=1)
+
+def get_data_full_negatives(separation_thresholds, num_random_negatives=1000, num_bins=100, doppelganger_method=''):
+    paths = setup_paths()
+    
+    # read full parquet file
+    df_full = pd.read_parquet(os.path.join(paths['out_data'], 'nway_csc21_gaia3_full.parquet'))
+    
+    features_to_hash = ['phot_g_mean_mag', 'phot_bp_mean_mag', 'phot_rp_mean_mag',
+                        'bp_rp', 'bp_g', 'g_rp', 'parallax', 'pmra', 'pmdec',
+                        'phot_g_mean_flux', 'phot_bp_mean_flux',
+                        'phot_rp_mean_flux', 'radial_velocity', 'vbroad', 'phot_variable_flag',
+                        'classprob_dsc_combmod_quasar', 'classprob_dsc_combmod_galaxy',
+                        'classprob_dsc_combmod_star', 'distance_gspphot']
+
+    if doppelganger_method:
+        df_full = process_hashes(df_full, features_to_hash, num_bins, doppelganger_method, paths)
+        print('finished hashing.')
+        
+    # identify most probable matches (positives)
+    df_pos = df_full.loc[df_full.groupby('csc21_name')['p_i'].idxmax()]
+    
+    # identify least probable matches (clear negatives)
+    df_pos_comp = df_full[~df_full.index.isin(df_pos.index)].copy()
+    df_neg = df_pos_comp.loc[df_pos_comp.groupby('csc21_name')['p_i'].idxmin()]
+    df_neg['negative_type'] = 'clear_negative'
+    
+    # prepare column lists
+    x_ray_columns = df_full.columns[:df_full.columns.get_loc('gaia3_source_id')].tolist()
+    gaia_columns = df_full.columns[df_full.columns.get_loc('gaia3_source_id'):].tolist()
+
+    # delete negatives that are dopplegangers of positives
+    if doppelganger_method:
+        positive_hashes = set(df_pos['hash'])
+        df_pos_comp_filtered = df_pos_comp[~df_pos_comp['hash'].isin(positive_hashes)]
+    else:
+        df_pos_comp_filtered = df_pos_comp
+    
+    # add intermediate cases
+    df_intermediate = df_pos_comp[df_pos_comp['separation'] > 5].copy()
+    df_intermediate['negative_type'] = 'intermediate'
+    
+    # positives by off-axis angle
+    df_pos['threshold_label'] = pd.cut(
+        df_pos['min_theta_mean'],
+        bins=[0, 3, 6, float('inf')],
+        labels=['0-3', '3-6', '6+']
+    )
+    
+    results = {
+        '0-3': {'df_pos': None, 'df_neg': None},
+        '3-6': {'df_pos': None, 'df_neg': None},
+        '6+': {'df_pos': None, 'df_neg': None}
+    }
+    
+    print('Before going to each threshold.')
+
+    # process each threshold range
+    for label in results.keys():
+        threshold = separation_thresholds[label]
+        
+        pos_range = df_pos.query(f'threshold_label == "{label}" and separation <= {threshold} and p_any >= 0.5')
+        chandra_ids_in_pos = pos_range['csc21_name'].unique()
+        
+        # generate random negatives
+        df_random_neg = fast_random_match_pandas(pos_range[x_ray_columns], 
+                                                 df_pos_comp_filtered[gaia_columns], 
+                                                 num_random_negatives)
+        
+        df_random_neg['negative_type'] = 'random'
+
+        df_random_neg.loc[:, 'separation':'count'] = -1
+
+        # combine all negatives
+        neg_range = pd.concat([
+            df_neg[df_neg['csc21_name'].isin(chandra_ids_in_pos)],
+            df_random_neg,
+            df_intermediate[df_intermediate['csc21_name'].isin(chandra_ids_in_pos)]
+        ], ignore_index=True)
+        
+        results[label]['df_pos'] = pos_range
+        results[label]['df_neg'] = neg_range
+        
+        print(f"Range {label}: {len(pos_range)} positives, {len(neg_range)} negatives")
+    
+    return results
+
+def fast_random_match_pandas(x_ray_df, gaia_df, num_random_negatives):
+    # repeat each x-ray row num_random_negatives
+    x_ray_repeated = x_ray_df.loc[x_ray_df.index.repeat(num_random_negatives)].reset_index(drop=True)
+    
+    # sample random rows from gaia_df
+    total_samples = len(x_ray_df) * num_random_negatives
+    random_gaia = gaia_df.sample(n=total_samples, replace=True).reset_index(drop=True)
+    
+    # combine the repeated x-ray data with the random gaia data
+    result = pd.concat([x_ray_repeated, random_gaia], axis=1)
+    
+    return result
+
+def process_hashes(df_full, features_to_hash, num_bins, doppelganger_method, paths):
+    hash_file = os.path.join(paths['out_data'], f'hashes_{doppelganger_method}_{num_bins}_bins.parquet')
+    
+    if os.path.exists(hash_file):
+        df_full['hash'] = pd.read_parquet(hash_file)['hash']
+    else:
+        df_transform = df_full.copy()
+        
+        log_transform_feats = [
+            'parallax', 'parallax_error', 'photflux_aper_b', 'phot_g_mean_flux', 'phot_bp_mean_flux',
+            'phot_rp_mean_flux', 'radial_velocity', 'vbroad', 'distance_gspphot'
+        ]
+        
+        for feat in log_transform_feats:
+            if feat in df_transform.columns:
+                if feat == 'parallax':
+                    df_transform[feat] = np.log10(df_transform[feat].clip(5e-5, 1))
+                else:
+                    df_transform[feat] = np.log10(df_transform[feat].clip(lower=1e-300))
+        
+        df_full['hash'] = create_hashes(df_transform, features_to_hash, num_bins, method=doppelganger_method)
+        df_full[['hash']].to_parquet(hash_file)
+    
+    print('finished hashing.')
+    return df_full

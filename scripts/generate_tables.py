@@ -168,42 +168,37 @@ def get_test_sources(df_pos, df_neg, random_seed=42, test_size=0.3):
     
     return test_sources
 
-def create_benchmark_set(full_data_path: str, output_path: str, random_seed=42, test_size=0.3):
-    # Load the full dataset
-    df_full = pd.read_csv(full_data_path)
+def create_benchmark_set(full_data_path, output_path, folder='', random_seed=42, test_size=0.3):
+    # load full dataset
+    df_full = pd.read_parquet(full_data_path) if full_data_path.endswith('.parquet') else pd.read_csv(full_data_path)
     
     separation_thresholds = {
-    '0-3': 1.3,  # 0-3 arcmin
-    '3-6': 1.3,  # 3-6 arcmin
-    '6+': 2.2    # 6+ arcmin
+        '0-3': 1.3,
+        '3-6': 1.3,
+        '6+': 2.2
     }
-    results = read_data(separation_thresholds)
+    results = read_data(separation_thresholds, folder)
     df_pos = results['0-3']['df_pos']
     df_neg = results['0-3']['df_neg']
-
-    # Get the test sources based on the preprocessing split
+    
     test_sources = get_test_sources(df_pos, df_neg, random_seed, test_size)
     
-    # Filter the full dataset to include only test set sources
     benchmark_set = df_full[df_full['csc21_name'].isin(test_sources)]
-    
-    # Create benchmark labels
     benchmark_set['benchmark_label'] = np.where(benchmark_set['match_flag'] == 1, 1, 0)
     
-    # Save the benchmark set
-    benchmark_set.to_csv(output_path, index=False)
+    benchmark_name = os.path.basename(folder) if folder else 'default'
+    output_path = output_path.replace('.csv', f'_{benchmark_name}.parquet')
+    benchmark_set.to_parquet(output_path, index=False)
     logging.info(f"Benchmark set created and saved to {output_path}")
 
-def main(process_type='default', test_mode=False, create_benchmark=False):
+def main(process_type='default', test_mode=False, create_benchmark=False, folder='full_negatives'):
     paths = setup_paths()
     os.makedirs(paths['out_data'], exist_ok=True)
-    
     try:
         if create_benchmark:
-            full_data_path = os.path.join(paths['out_data'], 'nway_csc21_gaia3_full.csv')
-
-            benchmark_output_path = os.path.join(paths['out_data'], 'benchmark_set.csv')
-            create_benchmark_set(full_data_path, benchmark_output_path)
+            full_data_path = os.path.join(paths['out_data'], 'nway_csc21_gaia3_full.parquet')
+            benchmark_output_path = os.path.join(paths['out_data'], 'benchmark_set.parquet')
+            create_benchmark_set(full_data_path, benchmark_output_path, folder)
         elif process_type == 'full':
             df_nway_all = load_nway_data(os.path.join(paths['data']))
             df_csc_all = load_csc_data(os.path.join(paths['data']))
@@ -246,7 +241,7 @@ def main(process_type='default', test_mode=False, create_benchmark=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Creates tables with most probable and negative matches.')
     parser.add_argument('--test', action='store_true', help='Run in test mode with limited data')
-    parser.add_argument('--process', choices=['default', 'full'], default='default', help='Select processing type')
+    parser.add_argument('--process', choices=['default', 'full', 'all_negs'], default='default', help='Select processing type')
     parser.add_argument('--benchmark', action='store_true', help='Create benchmark set (requires full_dataset.csv to exist)')
     args = parser.parse_args()
     

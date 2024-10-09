@@ -210,7 +210,7 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
             'min_samples_leaf': 1
         }
     elif model_type == 'lgbm':
-        model = lgb.LGBMClassifier(random_state=random_seed)
+        model = lgb.LGBMClassifier(random_state=random_seed, is_unbalance=True)
         if categorical_features:
             for c in categorical_features:
                 X_train[c] = X_train[c].astype('category')
@@ -232,14 +232,15 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
             'n_estimators': 500,
             'min_child_samples': 100,
             'subsample': 0.8,
-            'colsample_bytree': 0.8
+            'colsample_bytree': 0.8,
+            'is_unbalance': True
         }
     else:
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
 
     if hyperparameter_tuning:
         print("Performing hyperparameter tuning...")
-        search = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=20, cv=5, n_jobs=-1, verbose=2, scoring='accuracy', random_state=random_seed)
+        search = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=20, cv=5, verbose=2, scoring='balanced_accuracy', random_state=random_seed)
         search.fit(X_train, Y_train)
         best_model = search.best_estimator_
         best_params = search.best_params_
@@ -383,7 +384,7 @@ def run_experiments(df_pos, df_neg, model_type='rf', hyperparameter_tuning=False
 
     return results
 
-def save_experiment_results(results, model_type, hyperparameter_tuning, log_transform, normalization_method, random_seed):
+def save_experiment_results(results, exp_name, model_type, hyperparameter_tuning, log_transform, normalization_method, random_seed):
     """
     save all info returned by run_experiments in a new folder
     parameters:
@@ -400,7 +401,7 @@ def save_experiment_results(results, model_type, hyperparameter_tuning, log_tran
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     tuning_str = "tuned" if hyperparameter_tuning else "default"
     log_str = "log" if log_transform else "nolog"
-    experiment_name = f"{model_type}_{tuning_str}_{log_str}_{normalization_method}_seed{random_seed}_{timestamp}"
+    experiment_name = f"{exp_name}_{model_type}_{tuning_str}_{log_str}_{normalization_method}_seed{random_seed}_{timestamp}"
 
     # create folder
     base_path = "models"

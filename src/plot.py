@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, confusion_matrix
 from src.utils import prepare_feature_subset, preprocess, create_new_columns, load_model, transform_features
-import shap
+#import shap
 import lightgbm as lgb
 from scipy.cluster import hierarchy
 from scipy.spatial.distance import squareform
@@ -545,3 +545,62 @@ def plot_benchmark_results(model, benchmark_df, config, experiment_name):
         plt.close(fig)
     
     print(f"Benchmark results saved to {file_path}")
+
+
+def plot_histograms_numerical(df, feature_names=FEATURE_NAMES):
+    plt.rcParams['font.family'] = 'Nimbus Sans'
+    plt.rcParams['font.size'] = 18
+    plt.rcParams['axes.linewidth'] = 2
+    plt.rcParams['xtick.major.width'] = 2
+    plt.rcParams['ytick.major.width'] = 2
+
+    save_dir = os.path.join('figures', 'histograms')
+    os.makedirs(save_dir, exist_ok=True)
+    file_path = os.path.join(save_dir, f"histograms.pdf")
+
+    # identify x-ray and gaia properties
+    xray_cols = df.columns[df.columns.get_loc('csc21_name'):df.columns.get_loc('gaia3_source_id')]
+    gaia_cols = df.columns[df.columns.get_loc('gaia3_source_id'):df.columns.get_loc('separation')]
+
+    # filter columns based on feature_names
+    xray_cols = [col for col in xray_cols if col in feature_names]
+    gaia_cols = [col for col in gaia_cols if col in feature_names]
+
+    log_transform_feats = [
+    'parallax', 'parallax_error', 'photflux_aper_b', 'phot_g_mean_flux', 'phot_bp_mean_flux', 'phot_rp_mean_flux', 'radial_velocity', 'vbroad', 'distance_gspphot'
+    ]
+
+    with PdfPages(file_path) as pdf:
+        # bug alert : np auto bin fixing is extremely slow
+        # plot x-ray properties
+        df_xray = df.drop_duplicates(subset=['csc21_name'])
+        for col in xray_cols:
+            if col in log_transform_feats:
+                log_scale_bool = True
+                label_title = f'X-ray: log10({col})'
+            else:
+                log_scale_bool = False
+                label_title = f'X-ray: {col}'
+            plt.figure(figsize=(10, 6))
+            sns.histplot(data=df_xray, x=col, kde=True, bins=100, log_scale=log_scale_bool)
+            plt.title(label_title)
+            plt.tight_layout()
+            pdf.savefig()
+            plt.close()
+
+        # plot gaia properties
+        for col in gaia_cols:
+            if col in log_transform_feats:
+                log_scale_bool = True
+                label_title = f'Gaia: log10({col})'
+            else:
+                log_scale_bool = False
+                label_title = f'Gaia: {col}'
+            plt.figure(figsize=(10, 6))
+            sns.histplot(data=df, x=col, kde=True, bins=100, log_scale=log_scale_bool)
+            plt.title(label_title)
+            plt.tight_layout()
+            pdf.savefig()
+            plt.close()
+
+    print(f"Histograms have been saved to '{file_path}'")

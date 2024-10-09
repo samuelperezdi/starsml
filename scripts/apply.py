@@ -101,14 +101,15 @@ def calculate_probabilities(probabilities):
 
 if __name__ == "__main__":
     #loaded_dtypes = load_dtypes('column_dtypes.json')
-    df = pd.read_parquet('../out_data/nway_csc21_gaia3_full.parquet', engine='fastparquet')
+    #df = pd.read_parquet('../out_data/nway_csc21_gaia3_full.parquet', engine='fastparquet')
     print("data loaded...")
-    #df = pd.read_csv('../out_data/benchmark_set.csv', dtype=loaded_dtypes)
+    df = pd.read_parquet('../out_data/benchmark_set.parquet')
 
     print('starting processing now...')
     result_df = apply_model_and_calculate_probabilities(
         df,
-        'models/lgbm_default_nolog_none_seed42_20240829_142534/subset_9/model.joblib',
-        'full_results_with_probabilities.parquet'
+        #'models/lgbm_default_nolog_none_seed42_20240829_142534/subset_9/model.joblib',
+        'jobs/models/X100_hyperparam_lgbm_0-3_20240927_152823/model.joblib',
+        'benchmark_results_x1000_negatives.parquet'
         #'benchmark_results_with_probabilities_1.csv'
     )
