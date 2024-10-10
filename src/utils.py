@@ -111,6 +111,8 @@ def preprocess(df_pos, df_neg,  normalization_method='none', log_transform=False
     - indices_test: np.array, indices of test samples
     - categorical_features: list, names of categorical features (for LightGBM)
     """
+
+    cscids = df_pos.csc21_name.unique()
     # transform features
     X_pos, cat_features_pos = transform_features(df_pos, log_transform, model_type, feature_names)
     X_neg, cat_features_neg = transform_features(df_neg, log_transform, model_type, feature_names)
@@ -134,6 +136,41 @@ def preprocess(df_pos, df_neg,  normalization_method='none', log_transform=False
     X_train_norm, X_test_norm, scaler = normalize_train_test(X_train, X_test, method=normalization_method, categorical_features=categorical_features)
     
     return X_train_norm, X_test_norm, Y_train, Y_test, indices_train, indices_test, categorical_features, scaler
+
+def preprocess_cscid(df_pos, df_neg, normalization_method='none', log_transform=False, model_type='rf', random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
+    # split cscids into train and test sets
+    cscids = df_pos.csc21_name.unique()
+    cscids_train, cscids_test = train_test_split(cscids, test_size=test_size, random_state=random_seed)
+
+    # create train and test dataframes
+    df_pos_train = df_pos[df_pos.csc21_name.isin(cscids_train)]
+    df_pos_test = df_pos[df_pos.csc21_name.isin(cscids_test)]
+    df_neg_train = df_neg[df_neg.csc21_name.isin(cscids_train)]
+    df_neg_test = df_neg[df_neg.csc21_name.isin(cscids_test)]
+
+    # transform features
+    X_pos_train, cat_features_pos = transform_features(df_pos_train, log_transform, model_type, feature_names)
+    X_pos_test, _ = transform_features(df_pos_test, log_transform, model_type, feature_names)
+    X_neg_train, cat_features_neg = transform_features(df_neg_train, log_transform, model_type, feature_names)
+    X_neg_test, _ = transform_features(df_neg_test, log_transform, model_type, feature_names)
+
+    assert cat_features_pos == cat_features_neg, "Categorical features mismatch"
+    categorical_features = cat_features_pos
+
+    # concat X and create Y labels for train and test sets
+    X_train = pd.concat([X_pos_train, X_neg_train], axis=0, ignore_index=True)
+    X_test = pd.concat([X_pos_test, X_neg_test], axis=0, ignore_index=True)
+    Y_train = np.concatenate((np.ones(len(X_pos_train)), np.zeros(len(X_neg_train))))
+    Y_test = np.concatenate((np.ones(len(X_pos_test)), np.zeros(len(X_neg_test))))
+
+    # indices on csc21_name
+    cscids_train = pd.concat([df_pos_train.csc21_name, df_neg_train.csc21_name]).reset_index(drop=True)
+    cscids_test = pd.concat([df_pos_test.csc21_name, df_neg_test.csc21_name]).reset_index(drop=True)
+
+    # normalize
+    X_train_norm, X_test_norm, scaler = normalize_train_test(X_train, X_test, method=normalization_method, categorical_features=categorical_features)
+
+    return X_train_norm, X_test_norm, Y_train, Y_test, cscids_train, cscids_test, categorical_features, scaler
 
 
 
@@ -597,3 +634,10 @@ def remove_duplicate_columns(df):
     df = df.rename(columns=to_rename)
     
     return df
+
+def setup_paths():
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    return {
+        'data': os.path.join(base_path, 'data'),
+        'out_data': os.path.join(base_path, 'out_data')
+    }

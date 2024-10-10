@@ -12,8 +12,9 @@ from sklearn.metrics import balanced_accuracy_score
 
 sys.path.append(str(Path(__file__).parent.parent))
 from src.data import read_data
-from src.utils import preprocess, train_and_tune_model
+from src.utils import preprocess, preprocess_cscid, train_and_tune_model, setup_paths
 import pandas as pd
+from sklearn.model_selection import train_test_split
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -39,16 +40,30 @@ def downsample_negatives(df_pos, df_neg, intermediates=True, multiplier=100):
     # combine clear negatives with sampled negatives
     return pd.concat([clear_negatives, sampled_negatives])
 
-def train_model(experiment_name, multiplier, intermediates):
+def prepare_data(df_full):
     separation_thresholds = {'0-3': 1.3, '3-6': 1.3, '6+': 2.2}
-    range_offaxis = '0-3'  # as per comment, we're assuming range 0-3
+    range_offaxis = '0-3'  # we're assuming range 0-3
 
     results = read_data(separation_thresholds, folder='full_negatives', suffix='')
     df_pos = results[range_offaxis]['df_pos']
     df_neg = results[range_offaxis]['df_neg']
 
+    cscids = df_pos.csc21_name.unique()
+    cscids_train, cscids_benchmark = train_test_split(cscids, test_size=0.2, random_state=42, shuffle=True)
+
+    benchmark_set = df_full[df_full['csc21_name'].isin(cscids_benchmark)]
+    benchmark_set['benchmark_label'] = np.where(benchmark_set['match_flag'] == 1, 1, 0)
+
+    df_pos = df_pos[df_pos['csc21_name'].isin(cscids_train)]
+    df_neg = df_neg[df_neg['csc21_name'].isin(cscids_train)]
+
+    return df_pos, df_neg, benchmark_set
+
+def train_model(experiment_name, multiplier, intermediates, df_pos, df_neg, benchmark_set):
+    range_offaxis = '0-3'  # we're assuming range 0-3
+
     df_neg = downsample_negatives(df_pos, df_neg, intermediates, multiplier)
-    X_train, X_test, y_train, y_test, _, _, cat_features, _ = preprocess(df_pos, df_neg, model_type='lgbm')
+    X_train, X_test, y_train, y_test, _, _, cat_features, _ = preprocess_cscid(df_pos, df_neg, model_type='lgbm', test_size=0.2)
 
     model, y_pred, best_params = train_and_tune_model(
         X_train, X_test, y_train, y_test, cat_features, model_type='lgbm', hyperparameter_tuning=False
@@ -59,10 +74,18 @@ def train_model(experiment_name, multiplier, intermediates):
         'y_pred': y_pred,
         'best_params': best_params,
         'X_test': X_test,
-        'y_test': y_test
+        'y_test': y_test,
+        'benchmark_ids': benchmark_set['csc21_name'].tolist()
     }
     model_path = save_model(results_exp, experiment_name, range_offaxis)
     logging.info(f"Model saved to: {model_path}")
+
+    # preprocess the benchmark set with method preprocess
+    benchmark_set = preprocess(benchmark_set, model_type='lgbm')
+
+
+    # apply the model to the benchmark set
+    benchmark_set['predicted_label'] = model.predict(benchmark_set[cat_features])
 
     return balanced_accuracy_score(y_test, y_pred)
 
@@ -82,6 +105,7 @@ def save_model(results, exp_name, range_offaxis):
     
     joblib.dump(results['X_test'], os.path.join(model_path, "X_test.joblib"))
     joblib.dump(results['y_test'], os.path.join(model_path, "y_test.joblib"))
+    joblib.dump(results['benchmark_ids'], os.path.join(model_path, "benchmark_ids.joblib"))
     
     print(f"Model and results saved in: {model_path}")
     return model_path
@@ -99,13 +123,24 @@ def plot_results(multipliers, accuracies_with_int, accuracies_without_int):
     plt.close()
 
 def main(experiment_name):
+    paths = setup_paths()
+    os.makedirs(paths['out_data'], exist_ok=True)
+    full_data_path = os.path.join(paths['out_data'], 'nway_csc21_gaia3_full.parquet')
+    df_full = pd.read_parquet(full_data_path) if full_data_path.endswith('.parquet') else pd.read_csv(full_data_path)
+    print('full data in memory...')
+
     multipliers = [0, 20, 40, 60, 80, 100]
     accuracies_with_int = []
     accuracies_without_int = []
 
+    # prepare data
+    df_pos, df_neg, benchmark_set = prepare_data(df_full)
+    print('data prepared...')
+
+    # train models
     for multiplier in multipliers:
-        acc_with = train_model(f"{experiment_name}_with_int_{multiplier}X", multiplier, True)
-        acc_without = train_model(f"{experiment_name}_without_int_{multiplier}X", multiplier, False)
+        acc_with = train_model(f"{experiment_name}_with_int_{multiplier}X", multiplier, True, df_pos, df_neg, benchmark_set)
+        acc_without = train_model(f"{experiment_name}_without_int_{multiplier}X", multiplier, False, df_pos, df_neg, benchmark_set)
         
         accuracies_with_int.append(acc_with)
         accuracies_without_int.append(acc_without)
