@@ -162,6 +162,7 @@ def get_test_sources(df_pos, df_neg, random_seed=42, test_size=0.3):
     
     # Combine positive and negative dataframes
     df_combined = pd.concat([df_pos, df_neg], axis=0, ignore_index=True)
+    print(len(indices_test))
     
     # Get the CSC names for the test set
     test_sources = df_combined.iloc[indices_test]['csc21_name'].unique()
@@ -182,7 +183,8 @@ def create_benchmark_set(full_data_path, output_path, folder='', random_seed=42,
     df_neg = results['0-3']['df_neg']
     
     test_sources = get_test_sources(df_pos, df_neg, random_seed, test_size)
-    
+    print(df_pos.csc21_name.unique().shape[0], len(test_sources))
+    exit()
     benchmark_set = df_full[df_full['csc21_name'].isin(test_sources)]
     benchmark_set['benchmark_label'] = np.where(benchmark_set['match_flag'] == 1, 1, 0)
     

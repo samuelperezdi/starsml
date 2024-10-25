@@ -1,3 +1,4 @@
+from tkinter import _test
 import numpy as np
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler, QuantileTransformer, PowerTransformer
@@ -5,7 +6,7 @@ from astropy.io.votable import parse
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import RandomizedSearchCV
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score, classification_report, recall_score, roc_auc_score
 from sklearn.preprocessing import OneHotEncoder
 import lightgbm as lgb
 
@@ -15,6 +16,11 @@ import json
 from datetime import datetime
 
 import pandas as pd
+from scipy.stats import loguniform, uniform
+
+from hyperopt import hp, tpe, fmin, Trials, STATUS_OK, rand
+from sklearn.model_selection import cross_val_score
+from functools import partial
 
 # Global variables
 FEATURE_NAMES = [
@@ -33,7 +39,7 @@ LOG_TRANSFORM_FEATURES = [
 def create_new_columns(df):
     # create new features
     if 'sqrt(pmra^2+pmdec^2)' not in df.columns:
-        df['sqrt(pmra^2+pmdec^2)'] = np.sqrt(df['pmra']**2 + df['pmdec']**2)
+        df.loc[:, 'sqrt(pmra^2+pmdec^2)'] = np.sqrt(df['pmra']**2 + df['pmdec']**2)
     
     return df
 
@@ -112,7 +118,6 @@ def preprocess(df_pos, df_neg,  normalization_method='none', log_transform=False
     - categorical_features: list, names of categorical features (for LightGBM)
     """
 
-    cscids = df_pos.csc21_name.unique()
     # transform features
     X_pos, cat_features_pos = transform_features(df_pos, log_transform, model_type, feature_names)
     X_neg, cat_features_neg = transform_features(df_neg, log_transform, model_type, feature_names)
@@ -143,10 +148,10 @@ def preprocess_cscid(df_pos, df_neg, normalization_method='none', log_transform=
     cscids_train, cscids_test = train_test_split(cscids, test_size=test_size, random_state=random_seed)
 
     # create train and test dataframes
-    df_pos_train = df_pos[df_pos.csc21_name.isin(cscids_train)]
-    df_pos_test = df_pos[df_pos.csc21_name.isin(cscids_test)]
-    df_neg_train = df_neg[df_neg.csc21_name.isin(cscids_train)]
-    df_neg_test = df_neg[df_neg.csc21_name.isin(cscids_test)]
+    df_pos_train = df_pos[df_pos.csc21_name.isin(cscids_train)].copy()
+    df_pos_test = df_pos[df_pos.csc21_name.isin(cscids_test)].copy()
+    df_neg_train = df_neg[df_neg.csc21_name.isin(cscids_train)].copy()
+    df_neg_test = df_neg[df_neg.csc21_name.isin(cscids_test)].copy()
 
     # transform features
     X_pos_train, cat_features_pos = transform_features(df_pos_train, log_transform, model_type, feature_names)
@@ -171,7 +176,6 @@ def preprocess_cscid(df_pos, df_neg, normalization_method='none', log_transform=
     X_train_norm, X_test_norm, scaler = normalize_train_test(X_train, X_test, method=normalization_method, categorical_features=categorical_features)
 
     return X_train_norm, X_test_norm, Y_train, Y_test, cscids_train, cscids_test, categorical_features, scaler
-
 
 
 def handle_missing_values(X_train, X_test):
@@ -216,88 +220,152 @@ def votable_to_pandas(votable_file):
     return table.to_pandas()
 
 def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=None, model_type='rf', hyperparameter_tuning=True, random_seed=42):
-    """
-    train and tune a model based on the given splits and model type.
-    parameters:
-    - X_train: pd.DataFrame, training features
-    - X_test: pd.DataFrame, test features
-    - Y_train: np.array, training labels
-    - Y_test: np.array, test labels
-    - categorical_features: list, names of categorical features (for LightGBM)
-    - model_type: str, either "rf" for Random Forest or "lgbm" for LightGBM
-    - hyperparameter_tuning: bool, whether to perform hyperparameter tuning or not
-    - random_seed: int, random seed for reproducibility
-    returns:
-    - best_model: trained model
-    - y_pred: np.array, predictions on the test set
-    - best_params: dict, best hyperparameters if tuning is performed, else None
-    """
     if model_type == 'rf':
-        model = RandomForestClassifier(random_state=random_seed)
-        param_grid = {
-            'n_estimators': [int(x) for x in np.linspace(start=100, stop=1000, num=10)],
-            'max_depth': [None] + [int(x) for x in np.linspace(10, 110, num=11)],
-            'min_samples_split': [2, 5, 10],
-            'min_samples_leaf': [1, 2, 4]
-        }
-        default_params = {
-            'n_estimators': 800,
-            'max_depth': 20,
-            'min_samples_split': 5,
-            'min_samples_leaf': 1
-        }
+        model, param_grid, default_params = setup_random_forest(random_seed)
+        train_data = X_train
     elif model_type == 'lgbm':
-        model = lgb.LGBMClassifier(random_state=random_seed, is_unbalance=True)
-        if categorical_features:
-            for c in categorical_features:
-                X_train[c] = X_train[c].astype('category')
-                X_test[c] = X_test[c].astype('category')
-            model.set_params(categorical_feature=categorical_features)
-        param_grid = {
-            'num_leaves': [31, 63, 127],
-            'max_depth': [-1, 5, 10, 15],
-            'learning_rate': [0.01, 0.05, 0.1],
-            'n_estimators': [100, 300, 500],
-            'min_child_samples': [20, 50, 100],
-            'subsample': [0.6, 0.8, 1.0],
-            'colsample_bytree': [0.6, 0.8, 1.0]
-        }
-        default_params = {
-            'num_leaves': 127,
-            'max_depth': 15,
-            'learning_rate': 0.01,
-            'n_estimators': 500,
-            'min_child_samples': 100,
-            'subsample': 0.8,
-            'colsample_bytree': 0.8,
-            'is_unbalance': True
-        }
+        model, param_grid, default_params, train_data, test_data = setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, random_seed)
     else:
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
 
     if hyperparameter_tuning:
-        print("Performing hyperparameter tuning...")
-        search = RandomizedSearchCV(estimator=model, param_distributions=param_grid, n_iter=20, cv=5, verbose=2, scoring='balanced_accuracy', random_state=random_seed)
-        search.fit(X_train, Y_train)
-        best_model = search.best_estimator_
-        best_params = search.best_params_
-        print(f"Best parameters found: {best_params}")
+        best_model, best_params = perform_hyperparameter_tuning(model, param_grid, train_data, Y_train, test_data, random_seed, model_type)
     else:
-        print("Training the model without hyperparameter tuning...")
-        model.set_params(**default_params)
-        best_model = model
-        best_model.fit(X_train, Y_train)
-        best_params = default_params
+        best_model, best_params = train_with_default_params(model, default_params, train_data, Y_train, test_data, model_type)
 
-    # preds
     y_pred = best_model.predict(X_test)
-
-    # performance
-    print("Model performance on the test set:")
-    print(f"Accuracy: {accuracy_score(Y_test, y_pred)}")
-    print(classification_report(Y_test, y_pred))
+    y_train_pred = best_model.predict(X_train)
+    y_pred_proba = best_model.predict_proba(X_test)[:, 1]
+    y_train_pred_proba = best_model.predict_proba(X_train)[:, 1]
+    print_performance_metrics(Y_train, y_train_pred, y_train_pred_proba, Y_test, y_pred, y_pred_proba)
 
     return best_model, y_pred, best_params
+
+def setup_random_forest(random_seed):
+    model = RandomForestClassifier(random_state=random_seed)
+    param_grid = {
+        'n_estimators': [int(x) for x in np.linspace(start=100, stop=1000, num=10)],
+        'max_depth': [None] + [int(x) for x in np.linspace(10, 110, num=11)],
+        'min_samples_split': [2, 5, 10],
+        'min_samples_leaf': [1, 2, 4]
+    }
+    default_params = {
+        'n_estimators': 800,
+        'max_depth': 20,
+        'min_samples_split': 5,
+        'min_samples_leaf': 1
+    }
+    return model, param_grid, default_params
+
+def setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, random_seed):
+    if categorical_features:
+        X_train = X_train.copy()
+        X_test = X_test.copy()
+        for c in categorical_features:
+            X_train[c] = X_train[c].astype('category')
+            X_test[c] = X_test[c].astype('category')
+   
+    train_data = lgb.Dataset(X_train, label=Y_train, categorical_feature=categorical_features)
+    test_data = lgb.Dataset(X_test, label=Y_test, categorical_feature=categorical_features)
+    model = lgb.LGBMClassifier(
+        random_state=random_seed,
+        is_unbalance=True,
+        first_metric_only=True,
+        force_row_wise=True,
+        n_estimators = 1000
+    )
+
+    param_space = {
+        'learning_rate': hp.loguniform('learning_rate', -7, 0),
+        'num_leaves' : hp.qloguniform('num_leaves', 0, 7, 1),
+        'feature_fraction': hp.uniform('feature_fraction', 0.5, 1),
+        'bagging_fraction': hp.uniform('bagging_fraction', 0.5, 1),
+        'min_data_in_leaf': hp.qloguniform('min_data_in_leaf', 0, 6, 1),
+        'min_sum_hessian_in_leaf': hp.loguniform('min_sum_hessian_in_leaf', -16, 5),
+        'lambda_l1': hp.choice('lambda_l1', [0, hp.loguniform('lambda_l1_positive', -16, 2)]),
+        'lambda_l2': hp.choice('lambda_l2', [0, hp.loguniform('lambda_l2_positive', -16, 2)])
+    }
+    
+    default_params = {
+        'num_leaves': 127,
+        'max_depth': 15,
+        'learning_rate': 0.01,
+        'n_estimators': 1000,
+        'min_child_samples': 100,
+        'subsample': 0.8,
+        'colsample_bytree': 0.8,
+        'force_row_wise': True 
+    }
+    return model, param_space, default_params, train_data, test_data
+
+def objective(params, model, train_data, test_data, random_seed):
+    params['num_leaves'] = int(params['num_leaves'])
+    params['min_data_in_leaf'] = int(params['min_data_in_leaf'])
+    
+    # update
+    model.set_params(**params)
+    
+    # cross-val
+    score = cross_val_score(model, train_data.data, train_data.label, cv=5, scoring='roc_auc',
+                                                eval_set=[(test_data.data, test_data.label)], 
+                                                eval_metric='auc', early_stopping_rounds=10,
+                                                verbose=20).mean()
+    
+    return {'loss': -score, 'status': STATUS_OK}
+
+def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_data, random_seed, model_type):
+    print("Performing hyperparameter tuning...")
+    if model_type == 'lgbm':
+        trials = Trials()
+        objective_with_data = partial(objective, model=model, train_data=train_data, test_data=test_data, random_seed=random_seed)
+        
+        best = fmin(
+            fn=objective_with_data,
+            space=param_space,
+            algo=rand.suggest,
+            max_evals=20,
+            trials=trials,
+            rstate=np.random.default_rng(random_seed)
+        )
+        
+        # Convert hyperopt format to regular dictionary
+        best_params = {k: (int(v) if k in ['num_leaves', 'min_data_in_leaf', 'n_estimators'] else v) for k, v in best.items()}
+        if 'lambda_l1' in best_params and best_params['lambda_l1'] == 1:
+            best_params['lambda_l1'] = best_params.pop('lambda_l1_nonzero')
+        if 'lambda_l2' in best_params and best_params['lambda_l2'] == 1:
+            best_params['lambda_l2'] = best_params.pop('lambda_l2_nonzero')
+        
+        best_model = model.set_params(**best_params)
+    else:
+        from sklearn.model_selection import RandomizedSearchCV
+        search = RandomizedSearchCV(estimator=model, param_distributions=param_space, n_iter=20, cv=5, verbose=2, scoring='roc_auc', random_state=random_seed)
+        search.fit(train_data, Y_train)
+        best_model = search.best_estimator_
+        best_params = search.best_params_
+    
+    print(f"Best parameters found: {best_params}")
+    return best_model, best_params
+
+
+def train_with_default_params(model, default_params, train_data, Y_train, test_data, model_type):
+    print("Training the model without hyperparameter tuning...")
+    model.set_params(**default_params)
+    if model_type == 'lgbm':
+        model.fit(X=train_data.data, 
+                  y=train_data.label, 
+                  eval_set=[(test_data.data, test_data.label)], 
+                  eval_metric='auc', early_stopping_rounds=10,
+                  verbose=20)
+    else:
+        model.fit(train_data, Y_train)
+    return model, default_params
+
+def print_performance_metrics(Y_train, Y_train_pred, y_train_pred_proba, Y_test, y_pred, y_pred_proba):
+    print("Model performance on the train set:")
+    print(f"ROC AUC Train: {roc_auc_score(Y_train, y_train_pred_proba)}")
+    print("Model performance on the test set:")
+    print(f"ROC AUC Test: {roc_auc_score(Y_test, y_pred_proba)}")
+    print(classification_report(Y_test, y_pred))
 
 def prepare_feature_subset(df, subset_type):
     """

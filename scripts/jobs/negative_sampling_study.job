@@ -6,8 +6,8 @@
 #$ -l mres=384G,h_data=96G,h_vmem=96G,himem
 #$ -cwd
 #$ -j y
-#$ -N train_X100_hyperparam
-#$ -o train_X100_hyperparam.log
+#$ -N neg_study_hyperopt
+#$ -o negative_sampling_study.log
 #$ -m bea
 #$ -M vperezdiaz@cfa.harvard.edu
 #
@@ -22,7 +22,7 @@ echo + NSLOTS = $NSLOTS
 module load tools/conda
 start-conda
 conda activate starsml
-python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py 0-3 --experiment_name neg_study
+python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py --experiment_name neg_study_hyperopt
 
 #
 echo = `date` job $JOB_NAME done
