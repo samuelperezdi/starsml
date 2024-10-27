@@ -22,7 +22,7 @@ echo + NSLOTS = $NSLOTS
 module load tools/conda
 start-conda
 conda activate starsml
-python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py --experiment_name neg_study_hyperopt
+python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py --experiment_name neg_study_def
 
 #
 echo = `date` job $JOB_NAME done

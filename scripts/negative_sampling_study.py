@@ -19,6 +19,8 @@ from sklearn.model_selection import train_test_split
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def downsample_negatives(df_pos, df_neg, intermediates=True, multiplier=100):
+    if multiplier == 100:
+        return df_neg
     # keep clear negatives
     clear_negatives = df_neg[df_neg['negative_type'] == 'clear_negative'].copy()
     
@@ -71,7 +73,6 @@ def train_model(experiment_name, multiplier, intermediates, df_pos, df_neg, benc
 
     results_exp = {
         'model': model,
-        'y_pred': y_pred,
         'best_params': best_params,
         'X_test': X_test,
         'y_test': y_test,
@@ -102,10 +103,14 @@ def save_model(results, exp_name, range_offaxis):
     os.makedirs(model_path, exist_ok=True)
     
     joblib.dump(results['model'], os.path.join(model_path, "model.joblib"))
-    joblib.dump(results['y_pred'], os.path.join(model_path, "predictions.joblib"))
+    
+    # numpy types
+    best_params = {k: int(v) if isinstance(v, np.integer) else 
+                     float(v) if isinstance(v, np.floating) else v 
+                     for k, v in results['best_params'].items()}
     
     with open(os.path.join(model_path, "best_params.json"), 'w') as f:
-        json.dump(results['best_params'], f, indent=2)
+        json.dump(best_params, f, indent=2)
     
     joblib.dump(results['X_test'], os.path.join(model_path, "X_test.joblib"))
     joblib.dump(results['y_test'], os.path.join(model_path, "y_test.joblib"))
@@ -133,7 +138,7 @@ def main(experiment_name):
     df_full = pd.read_parquet(full_data_path) if full_data_path.endswith('.parquet') else pd.read_csv(full_data_path)
     print('full data in memory...')
 
-    multipliers = [0]
+    multipliers = [0, 20, 40, 60, 80, 100]
     metrics_with_int = []
     metrics_without_int = []
 
@@ -145,10 +150,10 @@ def main(experiment_name):
     for multiplier in multipliers:
         print(f"training model with multiplier {multiplier}X...")
         metric_with = train_model(f"{experiment_name}_with_int_{multiplier}X", multiplier, True, df_pos, df_neg, benchmark_set)
-        #metric_without = train_model(f"{experiment_name}_without_int_{multiplier}X", multiplier, False, df_pos, df_neg, benchmark_set)
+        metric_without = train_model(f"{experiment_name}_without_int_{multiplier}X", multiplier, False, df_pos, df_neg, benchmark_set)
         
         metrics_with_int.append(metric_with)
-        #metrics_without_int.append(metric_without)
+        metrics_without_int.append(metric_without)
 
     plot_results(multipliers, metrics_with_int, metrics_without_int)
 

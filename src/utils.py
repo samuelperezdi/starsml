@@ -272,12 +272,13 @@ def setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, rando
         is_unbalance=True,
         first_metric_only=True,
         force_row_wise=True,
-        n_estimators = 1000
+        n_estimators = 500,
+        verbose=-1
     )
 
     param_space = {
         'learning_rate': hp.loguniform('learning_rate', -7, 0),
-        'num_leaves' : hp.qloguniform('num_leaves', 0, 7, 1),
+        'num_leaves' : hp.qloguniform('num_leaves', 1, 7, 1),
         'feature_fraction': hp.uniform('feature_fraction', 0.5, 1),
         'bagging_fraction': hp.uniform('bagging_fraction', 0.5, 1),
         'min_data_in_leaf': hp.qloguniform('min_data_in_leaf', 0, 6, 1),
@@ -301,20 +302,23 @@ def setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, rando
 def objective(params, model, train_data, test_data, random_seed):
     params['num_leaves'] = int(params['num_leaves'])
     params['min_data_in_leaf'] = int(params['min_data_in_leaf'])
+    print(params)
     
-    # update
+    # update model params
     model.set_params(**params)
     
-    # cross-val
-    score = cross_val_score(model, train_data.data, train_data.label, cv=5, scoring='roc_auc',
-                                                eval_set=[(test_data.data, test_data.label)], 
-                                                eval_metric='auc', early_stopping_rounds=10,
-                                                verbose=20).mean()
+    # cross validation with roc_auc scoring
+    score = cross_val_score(
+        model, 
+        train_data.data, 
+        train_data.label,
+        cv=5,
+        scoring='roc_auc'
+    ).mean()
     
     return {'loss': -score, 'status': STATUS_OK}
 
 def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_data, random_seed, model_type):
-    print("Performing hyperparameter tuning...")
     if model_type == 'lgbm':
         trials = Trials()
         objective_with_data = partial(objective, model=model, train_data=train_data, test_data=test_data, random_seed=random_seed)
@@ -323,19 +327,26 @@ def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_
             fn=objective_with_data,
             space=param_space,
             algo=rand.suggest,
-            max_evals=20,
+            max_evals=100,
             trials=trials,
             rstate=np.random.default_rng(random_seed)
         )
+
         
-        # Convert hyperopt format to regular dictionary
-        best_params = {k: (int(v) if k in ['num_leaves', 'min_data_in_leaf', 'n_estimators'] else v) for k, v in best.items()}
-        if 'lambda_l1' in best_params and best_params['lambda_l1'] == 1:
-            best_params['lambda_l1'] = best_params.pop('lambda_l1_nonzero')
-        if 'lambda_l2' in best_params and best_params['lambda_l2'] == 1:
-            best_params['lambda_l2'] = best_params.pop('lambda_l2_nonzero')
+        # Just convert numeric params that need to be integers
+        best_params = {k: (int(v) if k in ['num_leaves', 'min_data_in_leaf'] else v) 
+                      for k, v in best.items()}
+        
+        best_params['n_estimators'] = 1000
         
         best_model = model.set_params(**best_params)
+        best_model.fit(
+            train_data.data, 
+            train_data.label, 
+            eval_set=[(test_data.data, test_data.label)], 
+            eval_metric='auc', 
+            early_stopping_rounds=10, 
+            verbose=20)
     else:
         from sklearn.model_selection import RandomizedSearchCV
         search = RandomizedSearchCV(estimator=model, param_distributions=param_space, n_iter=20, cv=5, verbose=2, scoring='roc_auc', random_state=random_seed)
