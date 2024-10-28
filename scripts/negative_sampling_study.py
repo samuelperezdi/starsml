@@ -21,26 +21,24 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 def downsample_negatives(df_pos, df_neg, intermediates=True, multiplier=100):
     if multiplier == 100:
         return df_neg
-    # keep clear negatives
-    clear_negatives = df_neg[df_neg['negative_type'] == 'clear_negative'].copy()
+        
+    # separate negatives by type
+    clear_negs = df_neg[df_neg['negative_type'] == 'clear_negative'].copy()
+    intermediate_negs = df_neg[df_neg['negative_type'] == 'intermediate'].copy() 
+    random_negs = df_neg[df_neg['negative_type'] == 'random'].copy()
+
+    # calculate samples needed for random negatives
+    n_samples = len(df_pos) * multiplier
     
-    # filter remaining negatives based on intermediates flag
-    other_negatives = df_neg[df_neg['negative_type'] != 'clear_negative'].copy()
-    if not intermediates:
-        other_negatives = other_negatives[other_negatives['negative_type'] == 'random'].copy()
-    
-    # calculate number of negatives to sample
-    n_pos = df_pos.shape[0]
-    n_neg_sample = n_pos * multiplier
-    
-    # sample from other negatives if necessary
-    if len(other_negatives) > n_neg_sample:
-        sampled_negatives = other_negatives.sample(n=n_neg_sample, random_state=42)
+    # sample random negatives 
+    if len(random_negs) > n_samples:
+        random_negs = random_negs.sample(n=n_samples, random_state=42)
+
+    # combine based on intermediates flag
+    if intermediates:
+        return pd.concat([clear_negs, intermediate_negs, random_negs])
     else:
-        sampled_negatives = other_negatives
-    
-    # combine clear negatives with sampled negatives
-    return pd.concat([clear_negatives, sampled_negatives])
+        return pd.concat([clear_negs, random_negs])
 
 def prepare_data(df_full):
     separation_thresholds = {'0-3': 1.3, '3-6': 1.3, '6+': 2.2}
@@ -119,7 +117,7 @@ def save_model(results, exp_name, range_offaxis):
     print(f"Model and results saved in: {model_path}")
     return model_path
 
-def plot_results(multipliers, metrics_with_int, metrics_without_int):
+def plot_results(multipliers, metrics_with_int, metrics_without_int, experiment_name):
     plt.figure(figsize=(10, 6))
     plt.plot(multipliers, metrics_with_int, label='With Intermediates', marker='o')
     plt.plot(multipliers, metrics_without_int, label='Without Intermediates', marker='s')
@@ -128,7 +126,7 @@ def plot_results(multipliers, metrics_with_int, metrics_without_int):
     plt.title('AUCROC vs Number of Random Negatives (Benchmark)')
     plt.legend()
     plt.grid(True)
-    plt.savefig('metric_vs_negatives_benchmark.png')
+    plt.savefig(f'{experiment_name}_metric_vs_negatives_benchmark.png')
     plt.close()
 
 def main(experiment_name):
@@ -138,7 +136,7 @@ def main(experiment_name):
     df_full = pd.read_parquet(full_data_path) if full_data_path.endswith('.parquet') else pd.read_csv(full_data_path)
     print('full data in memory...')
 
-    multipliers = [0, 20, 40, 60, 80, 100]
+    multipliers = [100]
     metrics_with_int = []
     metrics_without_int = []
 
@@ -155,7 +153,7 @@ def main(experiment_name):
         metrics_with_int.append(metric_with)
         metrics_without_int.append(metric_without)
 
-    plot_results(multipliers, metrics_with_int, metrics_without_int)
+    plot_results(multipliers, metrics_with_int, metrics_without_int, experiment_name)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train LGBM model with varying negative samples')

@@ -327,7 +327,7 @@ def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_
             fn=objective_with_data,
             space=param_space,
             algo=rand.suggest,
-            max_evals=100,
+            max_evals=20,
             trials=trials,
             rstate=np.random.default_rng(random_seed)
         )
