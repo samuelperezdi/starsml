@@ -142,41 +142,52 @@ def preprocess(df_pos, df_neg,  normalization_method='none', log_transform=False
     
     return X_train_norm, X_test_norm, Y_train, Y_test, indices_train, indices_test, categorical_features, scaler
 
-def preprocess_cscid(df_pos, df_neg, normalization_method='none', log_transform=False, model_type='rf', random_seed=42, test_size=0.3, feature_names=FEATURE_NAMES):
-    # split cscids into train and test sets
+def preprocess_cscid(df_pos, df_neg, df_full, normalization_method='none', log_transform=False, 
+                    model_type='rf', random_seed=42, eval_size=0.3, feature_names=FEATURE_NAMES):
+    # split cscids into train and eval sets
     cscids = df_pos.csc21_name.unique()
-    cscids_train, cscids_test = train_test_split(cscids, test_size=test_size, random_state=random_seed)
+    cscids_train, cscids_eval = train_test_split(cscids, test_size=eval_size, random_state=random_seed)
 
-    # create train and test dataframes
+    # create eval set from full data (similar to benchmark)
+    eval_set = df_full[df_full['csc21_name'].isin(cscids_eval)].copy()
+    eval_set.loc[:, 'eval_label'] = np.where(eval_set['match_flag'] == 1, 1, 0)
+
+    # create train dataframes
     df_pos_train = df_pos[df_pos.csc21_name.isin(cscids_train)].copy()
-    df_pos_test = df_pos[df_pos.csc21_name.isin(cscids_test)].copy()
     df_neg_train = df_neg[df_neg.csc21_name.isin(cscids_train)].copy()
-    df_neg_test = df_neg[df_neg.csc21_name.isin(cscids_test)].copy()
 
-    # transform features
-    X_pos_train, cat_features_pos = transform_features(df_pos_train, log_transform, model_type, feature_names)
-    X_pos_test, _ = transform_features(df_pos_test, log_transform, model_type, feature_names)
-    X_neg_train, cat_features_neg = transform_features(df_neg_train, log_transform, model_type, feature_names)
-    X_neg_test, _ = transform_features(df_neg_test, log_transform, model_type, feature_names)
+    # Check that the intersection between Chandra and Gaia IDs in the train and validation set is void
+    chandra_ids_train = set(df_pos_train['csc21_name']).union(set(df_neg_train['csc21_name']))
+    chandra_ids_eval = set(eval_set['csc21_name'])
+    gaia_ids_train = set(df_pos_train['gaia3_source_id']).union(set(df_neg_train['gaia3_source_id']))
+    gaia_ids_eval = set(eval_set['gaia3_source_id'])
 
-    assert cat_features_pos == cat_features_neg, "Categorical features mismatch"
-    categorical_features = cat_features_pos
+    chandra_overlap = chandra_ids_train.intersection(chandra_ids_eval)
+    gaia_overlap = gaia_ids_train.intersection(gaia_ids_eval)
+    
+    if chandra_overlap:
+        print(f"Chandra IDs overlap count between train and validation sets: {len(chandra_overlap)}")
+    if gaia_overlap:
+        print(f"Gaia IDs overlap count between train and validation sets: {len(gaia_overlap)}")
 
-    # concat X and create Y labels for train and test sets
+    # transform features for training data
+    X_pos_train, cat_features = transform_features(df_pos_train, log_transform, model_type, feature_names)
+    X_neg_train, _ = transform_features(df_neg_train, log_transform, model_type, feature_names)
+
+    # transform features for eval set
+    eval_set_X, _ = transform_features(eval_set, log_transform, model_type, feature_names)
+
+    # concat training data
     X_train = pd.concat([X_pos_train, X_neg_train], axis=0, ignore_index=True)
-    X_test = pd.concat([X_pos_test, X_neg_test], axis=0, ignore_index=True)
     Y_train = np.concatenate((np.ones(len(X_pos_train)), np.zeros(len(X_neg_train))))
-    Y_test = np.concatenate((np.ones(len(X_pos_test)), np.zeros(len(X_neg_test))))
-
-    # indices on csc21_name
-    cscids_train = pd.concat([df_pos_train.csc21_name, df_neg_train.csc21_name]).reset_index(drop=True)
-    cscids_test = pd.concat([df_pos_test.csc21_name, df_neg_test.csc21_name]).reset_index(drop=True)
 
     # normalize
-    X_train_norm, X_test_norm, scaler = normalize_train_test(X_train, X_test, method=normalization_method, categorical_features=categorical_features)
+    X_train_norm, eval_set_X_norm, scaler = normalize_train_test(X_train, eval_set_X, 
+                                                                method=normalization_method,
+                                                                categorical_features=cat_features)
 
-    return X_train_norm, X_test_norm, Y_train, Y_test, cscids_train, cscids_test, categorical_features, scaler
-
+    return (X_train_norm, eval_set_X_norm, Y_train, eval_set['eval_label'].values, 
+            cscids_train, cscids_eval, cat_features, scaler, eval_set)
 
 def handle_missing_values(X_train, X_test):
     imp_mean = SimpleImputer(missing_values=np.nan, strategy='median')
@@ -229,7 +240,7 @@ def train_and_tune_model(X_train, X_test, Y_train, Y_test, categorical_features=
         raise ValueError("Unsupported model type. Please choose 'rf' or 'lgbm'.")
 
     if hyperparameter_tuning:
-        best_model, best_params = perform_hyperparameter_tuning(model, param_grid, train_data, Y_train, test_data, random_seed, model_type)
+        best_model, best_params = perform_hyperparameter_tuning_sklearn(model, param_grid, train_data, Y_train, test_data, random_seed, model_type)
     else:
         best_model, best_params = train_with_default_params(model, default_params, train_data, Y_train, test_data, model_type)
 
@@ -273,12 +284,13 @@ def setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, rando
         first_metric_only=True,
         force_row_wise=True,
         n_estimators = 500,
+        n_jobs=4,
         verbose=-1
     )
 
     param_space = {
         'learning_rate': hp.loguniform('learning_rate', -7, 0),
-        'num_leaves' : hp.qloguniform('num_leaves', 1, 7, 1),
+        'num_leaves' : hp.qloguniform('num_leaves', 0, 7, 1),
         'feature_fraction': hp.uniform('feature_fraction', 0.5, 1),
         'bagging_fraction': hp.uniform('bagging_fraction', 0.5, 1),
         'min_data_in_leaf': hp.qloguniform('min_data_in_leaf', 0, 6, 1),
@@ -300,7 +312,7 @@ def setup_lightgbm(X_train, X_test, Y_train, Y_test, categorical_features, rando
     return model, param_space, default_params, train_data, test_data
 
 def objective(params, model, train_data, test_data, random_seed):
-    params['num_leaves'] = int(params['num_leaves'])
+    params['num_leaves'] = max(int(params['num_leaves']), 2)
     params['min_data_in_leaf'] = int(params['min_data_in_leaf'])
     print(params)
     
@@ -326,7 +338,7 @@ def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_
         best = fmin(
             fn=objective_with_data,
             space=param_space,
-            algo=rand.suggest,
+            algo=tpe.suggest, #rand.suggest
             max_evals=20,
             trials=trials,
             rstate=np.random.default_rng(random_seed)
@@ -357,6 +369,75 @@ def perform_hyperparameter_tuning(model, param_space, train_data, Y_train, test_
     print(f"Best parameters found: {best_params}")
     return best_model, best_params
 
+class QLogUniform:
+    def __init__(self, low, high, q, is_int=False):
+        self.low = low
+        self.high = high
+        self.q = q
+        self.is_int = is_int
+
+    def rvs(self, random_state=None):
+        rng = random_state if random_state else np.random
+        sample = np.exp(rng.uniform(self.low, self.high))
+        result = np.round(sample / self.q) * self.q
+        result = max(result, 2)
+        return int(result) if self.is_int else result
+
+class Choice:
+    def __init__(self, options):
+        self.options = options
+
+    def rvs(self, random_state=None):  # Accept random_state argument
+        rng = random_state if random_state else np.random
+        choice = rng.choice(len(self.options))
+        option = self.options[choice]
+        return option.rvs() if hasattr(option, 'rvs') else option
+
+        
+def perform_hyperparameter_tuning_sklearn(model, param_space, train_data, Y_train, test_data, random_seed, model_type):
+
+    param_space = {
+        'learning_rate': loguniform(np.exp(-7), 1),  # scipy's loguniform
+        'num_leaves': QLogUniform(0, 7, q=1, is_int=True),
+        'feature_fraction': uniform(0.5, 0.5),
+        'bagging_fraction': uniform(0.5, 0.5),
+        'min_data_in_leaf': QLogUniform(0, 6, q=1, is_int=True),
+        'min_sum_hessian_in_leaf': loguniform(np.exp(-16), np.exp(5)),
+        'lambda_l1': Choice([0, loguniform(np.exp(-16), np.exp(2))]),
+        'lambda_l2': Choice([0, loguniform(np.exp(-16), np.exp(2))])
+    }
+
+    search = RandomizedSearchCV(
+        estimator=model,
+        param_distributions=param_space,
+        n_iter=500,
+        scoring='roc_auc',
+        cv=5,
+        random_state=random_seed,
+        verbose=0,
+        n_jobs=8
+    )
+
+    # fit
+    search.fit(train_data.data, train_data.label)
+
+    best_model = search.best_estimator_
+    best_params = search.best_params_
+
+    best_params['n_estimators'] = 5000
+
+    best_model = model.set_params(**best_params, early_stopping_round=10)
+
+    best_model.fit(
+    train_data.data, 
+    train_data.label, 
+    eval_set=[(test_data.data, test_data.label)], 
+    eval_metric='auc')
+
+    print(f"Best parameters found: {best_params}")
+
+    return best_model, best_params
+
 
 def train_with_default_params(model, default_params, train_data, Y_train, test_data, model_type):
     print("Training the model without hyperparameter tuning...")
@@ -375,7 +456,7 @@ def print_performance_metrics(Y_train, Y_train_pred, y_train_pred_proba, Y_test,
     print("Model performance on the train set:")
     print(f"ROC AUC Train: {roc_auc_score(Y_train, y_train_pred_proba)}")
     print("Model performance on the test set:")
-    print(f"ROC AUC Test: {roc_auc_score(Y_test, y_pred_proba)}")
+    print(f"ROC AUC Eval: {roc_auc_score(Y_test, y_pred_proba)}")
     print(classification_report(Y_test, y_pred))
 
 def prepare_feature_subset(df, subset_type):

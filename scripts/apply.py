@@ -52,31 +52,32 @@ def apply_model_and_calculate_probabilities(df, model_path, output_path):
     print('transformed features.')
     # apply model
     df['p_match_ind'] = model.predict_proba(X)[:, 1]
-    df['p_prod'] = df['p_i'] * df['p_match_ind']
+    #df['p_prod'] = df['p_i'] * df['p_match_ind']
     
     print('model inference done.')
     # just do the thing above, not group anything.
 
-    def process_group(group):
-        start_time = time.time()
+    # def process_group(group):
+    #     start_time = time.time()
 
-        any_prob_model, probs_model = calculate_probabilities(group['p_match_ind'].values)
+    #     any_prob_model, probs_model = calculate_probabilities(group['p_match_ind'].values)
         
-        group['p_match_any'] = any_prob_model
-        group['p_match_norm'] = probs_model
-        group['p_prod_any'] = group['p_match_any'] * group['p_any']
-        group['p_prod_norm'] = group['p_match_norm'] * group['p_i']
+    #     group['p_match_any'] = any_prob_model
+    #     group['p_match_norm'] = probs_model
+    #     group['p_prod_any'] = group['p_match_any'] * group['p_any']
+    #     group['p_prod_norm'] = group['p_match_norm'] * group['p_i']
 
-        end_time = time.time()
-        processing_time = end_time - start_time
+    #     end_time = time.time()
+    #     processing_time = end_time - start_time
         
-        print(f"source: {group['csc21_name'].iloc[0]}, time: {processing_time:.4f} seconds")
-        return group
+    #     print(f"source: {group['csc21_name'].iloc[0]}, time: {processing_time:.4f} seconds")
+    #     return group
     
     # apply processing to each group
-    result_df = df.groupby('csc21_name')[df.columns].apply(process_group).reset_index(drop=True)
+    #result_df = df.groupby('csc21_name')[df.columns].apply(process_group).reset_index(drop=True)
 
     # save result
+    result_df = df
     result_df.to_parquet(output_path, index=False, engine='fastparquet')
     print(f"results saved to {output_path}")
     
@@ -101,15 +102,15 @@ def calculate_probabilities(probabilities):
 
 if __name__ == "__main__":
     #loaded_dtypes = load_dtypes('column_dtypes.json')
-    #df = pd.read_parquet('../out_data/nway_csc21_gaia3_full.parquet', engine='fastparquet')
+    df = pd.read_parquet('../out_data/nway_csc21_gaia3_full.parquet', engine='fastparquet')
     print("data loaded...")
-    df = pd.read_parquet('../out_data/benchmark_set.parquet')
+    #df = pd.read_parquet('../out_data/benchmark_set.parquet')
 
     print('starting processing now...')
     result_df = apply_model_and_calculate_probabilities(
         df,
         #'models/lgbm_default_nolog_none_seed42_20240829_142534/subset_9/model.joblib',
-        'jobs/models/X100_hyperparam_lgbm_0-3_20240927_152823/model.joblib',
-        'benchmark_results_x1000_negatives.parquet'
+        'jobs/models/neg_study_dis_niter200_withint_with_int_5X_lgbm_0-3_20241113_235113/model.joblib',
+        'nway_csc21_gaia3_full_neg_study_dis_niter200.parquet'
         #'benchmark_results_with_probabilities_1.csv'
     )

@@ -20,7 +20,8 @@ logging.basicConfig(
 def setup_paths():
     base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     return {
-        'out_data': os.path.join(base_path, 'out_data')
+        'out_data': os.path.join(base_path, 'out_data'),
+        'data': os.path.join(base_path, 'data')
     }
 
 def read_votable_to_dataframe(filepath, columns=None):
@@ -573,11 +574,74 @@ def fast_random_match_pandas(x_ray_df, gaia_df, num_random_negatives):
     
     # sample random rows from gaia_df
     total_samples = len(x_ray_df) * num_random_negatives
+
     random_gaia = gaia_df.sample(n=total_samples, replace=True).reset_index(drop=True)
+        # rename and map Gaia columns
+    column_mapping = {
+        'SOURCE_ID': 'gaia3_source_id',
+        'ra': 'gaia3_ra',
+        'dec': 'gaia3_dec'
+    }
     
+    df_negs_processed = random_gaia.rename(columns=column_mapping)
+    
+    # add missing columns with defaults
+    default_columns = {
+        'gaia3_epa' : -1,
+        'gaia3_era': -1,
+        'gaia3_edec': -1,
+        'separation': -1,
+        'dist_bayesfactor': -1,
+        'dist_post': -1,
+        'p_single': -1,
+        'p_any': -1,
+        'p_i': -1,
+        'match_flag': 0,
+        'count': -1,
+        'benchmark_label': 0
+    }
+    
+    for col, default_val in default_columns.items():
+        df_negs_processed[col] = default_val
+
     # combine the repeated x-ray data with the random gaia data
     result = pd.concat([x_ray_repeated, random_gaia], axis=1)
     
+    return result
+
+def fast_random_match_duckdb(x_ray_df, negative_gaia_sources_path, num_random_negatives):
+    import duckdb
+    con = duckdb.connect()
+    total_samples = len(x_ray_df) * num_random_negatives
+    
+    query = f"""
+    SELECT 
+        SOURCE_ID as gaia3_source_id,
+        ra as gaia3_ra,
+        dec as gaia3_dec,
+        *  EXCLUDE (SOURCE_ID, ra, dec)
+    FROM '{negative_gaia_sources_path}'
+    USING SAMPLE {total_samples} ROWS
+    """
+    
+    random_gaia = con.execute(query).df()
+    
+    # repeat x-ray rows and combine with random gaia
+    x_ray_repeated = x_ray_df.loc[x_ray_df.index.repeat(num_random_negatives)].reset_index(drop=True)
+    result = pd.concat([x_ray_repeated, random_gaia], axis=1)
+    
+    # add default columns 
+    default_columns = {
+        'gaia3_epa': -1, 'gaia3_era': -1, 'gaia3_edec': -1,
+        'separation': -1, 'dist_bayesfactor': -1, 'dist_post': -1,
+        'p_single': -1, 'p_any': -1, 'p_i': -1,
+        'match_flag': -1, 'count': -1, 'benchmark_label': 0
+    }
+    
+    for col, val in default_columns.items():
+        result[col] = val
+        
+    con.close()
     return result
 
 def process_hashes(df_full, features_to_hash, num_bins, doppelganger_method, paths):
@@ -605,3 +669,49 @@ def process_hashes(df_full, features_to_hash, num_bins, doppelganger_method, pat
     
     print('finished hashing.')
     return df_full
+
+def get_data_basic_matches(df_full, off_axis_range, separation_threshold):
+    """
+    identify and filter probable matches from a dataframe
+    parameters:
+    df_full (pd.DataFrame): input dataframe with match data
+    off_axis_range (str): range label for off-axis angle
+    separation_threshold (float): maximum separation threshold
+    returns:
+    tuple: filtered positive and negative matches dataframes
+    """
+    
+    # identify most probable matches (positives)
+    df_pos = df_full.loc[df_full.groupby('csc21_name')['p_i'].idxmax()]
+    
+    # identify least probable matches (negatives)
+    df_pos_comp = df_full[~df_full.index.isin(df_pos.index)]
+    df_neg = df_pos_comp.loc[df_pos_comp.groupby('csc21_name')['separation'].idxmax()]
+    df_neg = df_neg[df_neg['separation'] >= 5].copy()
+    df_neg['negative_type'] = 'clear_negative'
+
+
+    # add intermediate cases
+    df_intermediate = df_pos_comp[df_pos_comp['separation'] >= 5].copy()
+    df_intermediate['negative_type'] = 'intermediate'
+
+    # label positives by off-axis angle
+    df_pos['threshold_label'] = pd.cut(
+        df_pos['min_theta_mean'],
+        bins=[0, 3, 6, float('inf')],
+        labels=['0-3', '3-6', '6+']
+    )
+    
+    # filter for specific range and separation threshold
+    pos_range = df_pos.query(f'threshold_label == "{off_axis_range}" and separation <= {separation_threshold} and p_any >= 0.9')
+    chandra_ids_in_pos = pos_range['csc21_name'].unique()
+    #neg_range = df_neg[df_neg['csc21_name'].isin(chandra_ids_in_pos)]
+
+    neg_range = pd.concat([
+        df_neg[df_neg['csc21_name'].isin(chandra_ids_in_pos)],
+        df_intermediate[df_intermediate['csc21_name'].isin(chandra_ids_in_pos)]
+    ], ignore_index=True)
+    
+    print(f"Range {off_axis_range}: {len(pos_range)} positives, {len(neg_range)} negatives")
+    
+    return pos_range, neg_range

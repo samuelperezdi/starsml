@@ -1,13 +1,13 @@
 # /bin/sh
 # ----------------Parameters---------------------- #
 #$ -S /bin/sh
-#$ -pe mthread 4
+#$ -pe mthread 40
 #$ -q lThM.q
-#$ -l mres=384G,h_data=96G,h_vmem=96G,himem
+#$ -l mres=640G,h_data=16G,h_vmem=16G,himem
 #$ -cwd
 #$ -j y
-#$ -N neg_study_hyperopt_random_20_X100
-#$ -o neg_study_hyperopt_random_20_X100.log
+#$ -N neg_study_dis_niter500_withint
+#$ -o neg_study_dis_niter500_withint.log
 #$ -m bea
 #$ -M vperezdiaz@cfa.harvard.edu
 #
@@ -23,7 +23,7 @@ module load tools/conda
 start-conda
 conda activate starsml
 module load tools/python/use-multi-thread
-python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py --experiment_name neg_study_hyperopt_random_20_X100
+python3 /scratch/public/sao/vdiaz/workspace/starsml/scripts/negative_sampling_study.py --experiment_name neg_study_dis_niter500_withint
 
 #
 echo = `date` job $JOB_NAME done
