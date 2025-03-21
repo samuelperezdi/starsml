@@ -1,0 +1,407 @@
+2024-08-27 12:09:15,304 INFO    StreamThr :689403 [internal.py:wandb_internal():86] W&B internal server running at pid: 689403, started at: 2024-08-27 12:09:15.302583
+2024-08-27 12:09:15,305 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status
+2024-08-27 12:09:15,306 INFO    WriterThread:689403 [datastore.py:open_for_write():87] open: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/run-pvzznizc.wandb
+2024-08-27 12:09:15,309 DEBUG   SenderThread:689403 [sender.py:send():379] send: header
+2024-08-27 12:09:15,347 DEBUG   SenderThread:689403 [sender.py:send():379] send: run
+2024-08-27 12:09:15,573 INFO    SenderThread:689403 [dir_watcher.py:__init__():211] watching files in: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files
+2024-08-27 12:09:15,573 INFO    SenderThread:689403 [sender.py:_start_run_threads():1124] run started: pvzznizc with start time 1724774955.302549
+2024-08-27 12:09:15,593 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: check_version
+2024-08-27 12:09:15,594 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: check_version
+2024-08-27 12:09:15,683 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: run_start
+2024-08-27 12:09:15,684 DEBUG   HandlerThread:689403 [system_info.py:__init__():26] System info init
+2024-08-27 12:09:15,684 DEBUG   HandlerThread:689403 [system_info.py:__init__():41] System info init done
+2024-08-27 12:09:15,684 INFO    HandlerThread:689403 [system_monitor.py:start():194] Starting system monitor
+2024-08-27 12:09:15,685 INFO    SystemMonitor:689403 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-08-27 12:09:15,685 INFO    HandlerThread:689403 [system_monitor.py:probe():214] Collecting system info
+2024-08-27 12:09:15,687 INFO    SystemMonitor:689403 [interfaces.py:start():190] Started cpu monitoring
+2024-08-27 12:09:15,688 INFO    SystemMonitor:689403 [interfaces.py:start():190] Started disk monitoring
+2024-08-27 12:09:15,688 INFO    SystemMonitor:689403 [interfaces.py:start():190] Started memory monitoring
+2024-08-27 12:09:15,689 INFO    SystemMonitor:689403 [interfaces.py:start():190] Started network monitoring
+2024-08-27 12:09:15,702 DEBUG   HandlerThread:689403 [system_info.py:probe():150] Probing system
+2024-08-27 12:09:15,707 DEBUG   HandlerThread:689403 [system_info.py:_probe_git():135] Probing git
+2024-08-27 12:09:15,741 DEBUG   HandlerThread:689403 [system_info.py:_probe_git():143] Probing git done
+2024-08-27 12:09:15,742 DEBUG   HandlerThread:689403 [system_info.py:probe():198] Probing system done
+2024-08-27 12:09:15,742 DEBUG   HandlerThread:689403 [system_monitor.py:probe():223] {'os': 'Linux-4.18.0-553.16.1.el8_10.x86_64-x86_64-with-glibc2.28', 'python': '3.9.19', 'heartbeatAt': '2024-08-27T16:09:15.702322', 'startedAt': '2024-08-27T16:09:15.274675', 'docker': None, 'cuda': None, 'args': ('plot', '--plot-type', 'wandb_experiment', '--model-path', 'models/lgbm_default_nolog_none_seed42_20240826_132839'), 'state': 'running', 'program': '/data/csc2_gums/starsml/starsml/scripts/classification.py', 'codePathLocal': 'classification.py', 'codePath': 'scripts/classification.py', 'git': {'remote': 'https://github.com/samuelperezdi/starsml.git', 'commit': '09b8bc4c1e9d09f0594349815b6cd984ae1763ad'}, 'email': None, 'root': '/data/csc2_gums/starsml/starsml', 'host': 'zumbador.cfa.harvard.edu', 'username': 'vdiaz', 'executable': '/scratch1/vdiaz/.conda/envs/new/bin/python3', 'cpu_count': 4, 'cpu_count_logical': 4, 'cpu_freq': {'current': 2.71525, 'min': 2800.0, 'max': 2800.0}, 'cpu_freq_per_core': [{'current': 2.8, 'min': 2800.0, 'max': 2800.0}, {'current': 2.461, 'min': 2800.0, 'max': 2800.0}, {'current': 2.8, 'min': 2800.0, 'max': 2800.0}, {'current': 2.8, 'min': 2800.0, 'max': 2800.0}], 'disk': {'/': {'total': 95.56354522705078, 'used': 14.878982543945312}}, 'memory': {'total': 3.5040740966796875}}
+2024-08-27 12:09:15,743 INFO    HandlerThread:689403 [system_monitor.py:probe():224] Finished collecting system info
+2024-08-27 12:09:15,743 INFO    HandlerThread:689403 [system_monitor.py:probe():227] Publishing system info
+2024-08-27 12:09:15,743 DEBUG   HandlerThread:689403 [system_info.py:_save_conda():207] Saving list of conda packages installed into the current environment
+2024-08-27 12:09:16,576 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/conda-environment.yaml
+2024-08-27 12:09:19,118 DEBUG   HandlerThread:689403 [system_info.py:_save_conda():222] Saving conda packages done
+2024-08-27 12:09:19,121 INFO    HandlerThread:689403 [system_monitor.py:probe():229] Finished publishing system info
+2024-08-27 12:09:19,124 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:19,124 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-metadata.json with policy now
+2024-08-27 12:09:19,270 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: python_packages
+2024-08-27 12:09:19,270 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: python_packages
+2024-08-27 12:09:19,270 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: stop_status
+2024-08-27 12:09:19,271 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: internal_messages
+2024-08-27 12:09:19,275 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: stop_status
+2024-08-27 12:09:19,320 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:19,342 DEBUG   SenderThread:689403 [sender.py:send():379] send: telemetry
+2024-08-27 12:09:19,342 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:19,342 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:19,395 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:19,418 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/kagaeeqz-wandb-metadata.json
+2024-08-27 12:09:19,599 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/conda-environment.yaml
+2024-08-27 12:09:19,600 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/requirements.txt
+2024-08-27 12:09:19,600 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:19,600 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-metadata.json
+2024-08-27 12:09:20,396 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:09:21,025 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:21,026 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:21,026 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png with policy now
+2024-08-27 12:09:21,028 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:21,028 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:21,032 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:21,253 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/m2m9kagk-media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png
+2024-08-27 12:09:21,318 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:21,318 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/histograms_1_2_ff2fb9daef6275c7ea21.png with policy now
+2024-08-27 12:09:21,318 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:21,320 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:21,322 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:21,325 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:21,439 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:21,439 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png with policy now
+2024-08-27 12:09:21,439 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:21,441 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:21,441 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:21,479 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:21,547 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/n27xps7u-media/images/histograms_1_2_ff2fb9daef6275c7ea21.png
+2024-08-27 12:09:21,663 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:21,663 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png
+2024-08-27 12:09:21,664 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png
+2024-08-27 12:09:21,664 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_1_2_ff2fb9daef6275c7ea21.png
+2024-08-27 12:09:21,664 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media
+2024-08-27 12:09:21,664 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:21,762 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/l7fszx3y-media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png
+2024-08-27 12:09:21,999 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/kwecc8ha-media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png
+2024-08-27 12:09:22,058 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/qdk83tc2-media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png
+2024-08-27 12:09:22,150 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/ozxm8r6d-media/images/histograms_1_2_ff2fb9daef6275c7ea21.png
+2024-08-27 12:09:22,694 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:22,696 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:22,696 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:22,698 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:22,713 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:22,717 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:22,727 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:22,759 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:23,665 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:24,292 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:24,292 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:24,292 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png with policy now
+2024-08-27 12:09:24,294 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:24,295 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:24,299 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:24,500 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/eb2fh009-media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png
+2024-08-27 12:09:24,586 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:24,586 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:24,586 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/histograms_2_7_6e1cfc39188c20186a59.png with policy now
+2024-08-27 12:09:24,588 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:24,589 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:24,593 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:24,670 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:24,670 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png
+2024-08-27 12:09:24,671 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_2_7_6e1cfc39188c20186a59.png
+2024-08-27 12:09:24,672 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:24,687 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:24,688 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png with policy now
+2024-08-27 12:09:24,688 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:24,690 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:24,690 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:24,752 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:24,819 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/g5vul2pq-media/images/histograms_2_7_6e1cfc39188c20186a59.png
+2024-08-27 12:09:24,914 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/vsn7x4xi-media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png
+2024-08-27 12:09:24,973 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/7f4sm2cm-media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png
+2024-08-27 12:09:25,155 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/em8kp9w8-media/images/histograms_2_7_6e1cfc39188c20186a59.png
+2024-08-27 12:09:25,730 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:25,730 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png
+2024-08-27 12:09:25,731 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:25,756 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:09:25,947 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:25,948 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:25,949 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:25,952 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:25,986 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:25,987 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:25,988 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:26,000 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:26,033 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/idfr8hb3-media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png
+2024-08-27 12:09:26,760 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:27,517 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:27,517 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:27,517 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/scatter_plot_3_11_6625734be86eef353203.png with policy now
+2024-08-27 12:09:27,519 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:27,520 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:27,524 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:27,729 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/3mp4y2kv-media/images/scatter_plot_3_11_6625734be86eef353203.png
+2024-08-27 12:09:27,763 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:27,763 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_3_11_6625734be86eef353203.png
+2024-08-27 12:09:27,764 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:27,933 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:27,933 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:27,933 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/histograms_3_12_29793486548a4286f420.png with policy now
+2024-08-27 12:09:27,935 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:27,936 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:27,940 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:28,042 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:28,043 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png with policy now
+2024-08-27 12:09:28,043 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:28,045 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:28,045 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:28,060 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/6b5s5qgr-media/images/scatter_plot_3_11_6625734be86eef353203.png
+2024-08-27 12:09:28,081 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:28,148 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/mcncftyt-media/images/histograms_3_12_29793486548a4286f420.png
+2024-08-27 12:09:28,266 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/zlfs0cer-media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png
+2024-08-27 12:09:28,807 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:28,807 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png
+2024-08-27 12:09:28,808 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_3_12_29793486548a4286f420.png
+2024-08-27 12:09:28,808 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:29,121 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/ptjb7t9k-media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png
+2024-08-27 12:09:29,195 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/jjhb4j5s-media/images/histograms_3_12_29793486548a4286f420.png
+2024-08-27 12:09:29,400 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:29,402 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:29,403 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:29,405 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:29,446 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:29,447 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:29,449 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:29,481 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:29,842 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:30,936 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:30,936 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:30,936 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png with policy now
+2024-08-27 12:09:30,938 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:30,938 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:09:30,939 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:30,945 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:31,162 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/43dcn55g-media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png
+2024-08-27 12:09:31,222 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:31,222 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:31,222 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/histograms_4_17_b056304c0500974fed0b.png with policy now
+2024-08-27 12:09:31,224 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:31,225 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:31,229 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:31,323 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:31,323 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:31,323 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/confusion_matrix_4_18_411377f3971dc94f8601.png with policy now
+2024-08-27 12:09:31,325 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:31,337 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:31,368 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:31,438 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/wfdqnqyg-media/images/histograms_4_17_b056304c0500974fed0b.png
+2024-08-27 12:09:31,568 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/6izh00e2-media/images/confusion_matrix_4_18_411377f3971dc94f8601.png
+2024-08-27 12:09:31,897 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:31,898 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_4_18_411377f3971dc94f8601.png
+2024-08-27 12:09:31,898 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png
+2024-08-27 12:09:31,898 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_4_17_b056304c0500974fed0b.png
+2024-08-27 12:09:31,898 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:32,205 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/k2gvs0zj-media/images/confusion_matrix_4_18_411377f3971dc94f8601.png
+2024-08-27 12:09:32,272 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/j1ipfo7k-media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png
+2024-08-27 12:09:32,305 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/49kx1rku-media/images/histograms_4_17_b056304c0500974fed0b.png
+2024-08-27 12:09:32,553 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:32,554 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:32,555 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:32,557 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:32,606 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:32,607 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:32,608 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:32,639 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:32,932 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:34,165 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:34,165 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:34,165 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png with policy now
+2024-08-27 12:09:34,167 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:34,168 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:34,173 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:34,272 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: stop_status
+2024-08-27 12:09:34,273 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: stop_status
+2024-08-27 12:09:34,282 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: internal_messages
+2024-08-27 12:09:34,408 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/beyl30gc-media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png
+2024-08-27 12:09:34,457 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:34,457 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/histograms_5_22_87c6333bc83fe9471107.png with policy now
+2024-08-27 12:09:34,497 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:34,498 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:34,498 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:34,502 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:34,558 DEBUG   SenderThread:689403 [sender.py:send():379] send: files
+2024-08-27 12:09:34,558 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:34,558 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png with policy now
+2024-08-27 12:09:34,560 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:34,561 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:34,583 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:34,702 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/rzbz9bzg-media/images/histograms_5_22_87c6333bc83fe9471107.png
+2024-08-27 12:09:34,779 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/3xcrg6fu-media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png
+2024-08-27 12:09:34,986 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:34,986 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png
+2024-08-27 12:09:34,998 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_5_22_87c6333bc83fe9471107.png
+2024-08-27 12:09:34,999 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png
+2024-08-27 12:09:34,999 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images
+2024-08-27 12:09:35,333 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/y4nzzmh1-media/images/histograms_5_22_87c6333bc83fe9471107.png
+2024-08-27 12:09:35,333 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/ytlfka08-media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png
+2024-08-27 12:09:35,389 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /tmp/tmp681ia1p5wandb/w9et4n79-media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png
+2024-08-27 12:09:35,954 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:35,955 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:35,956 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:35,957 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:09:35,959 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:35,985 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:09:35,986 DEBUG   SenderThread:689403 [sender.py:send():379] send: history
+2024-08-27 12:09:35,986 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:09:35,992 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:35,992 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:36,015 DEBUG   SenderThread:689403 [sender.py:send():379] send: exit
+2024-08-27 12:09:36,015 INFO    SenderThread:689403 [sender.py:send_exit():586] handling exit code: 1
+2024-08-27 12:09:36,015 INFO    SenderThread:689403 [sender.py:send_exit():588] handling runtime: 20
+2024-08-27 12:09:36,018 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:36,018 INFO    SenderThread:689403 [sender.py:send_exit():594] send defer
+2024-08-27 12:09:36,018 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,018 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 0
+2024-08-27 12:09:36,018 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,019 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 0
+2024-08-27 12:09:36,019 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 1
+2024-08-27 12:09:36,019 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,019 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 1
+2024-08-27 12:09:36,020 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,020 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 1
+2024-08-27 12:09:36,020 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 2
+2024-08-27 12:09:36,020 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,020 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 2
+2024-08-27 12:09:36,021 INFO    HandlerThread:689403 [system_monitor.py:finish():203] Stopping system monitor
+2024-08-27 12:09:36,021 DEBUG   SystemMonitor:689403 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-08-27 12:09:36,021 DEBUG   SystemMonitor:689403 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-08-27 12:09:36,021 DEBUG   SystemMonitor:689403 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-08-27 12:09:36,021 INFO    HandlerThread:689403 [interfaces.py:finish():202] Joined cpu monitor
+2024-08-27 12:09:36,022 INFO    HandlerThread:689403 [interfaces.py:finish():202] Joined disk monitor
+2024-08-27 12:09:36,022 INFO    HandlerThread:689403 [interfaces.py:finish():202] Joined memory monitor
+2024-08-27 12:09:36,022 INFO    HandlerThread:689403 [interfaces.py:finish():202] Joined network monitor
+2024-08-27 12:09:36,022 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,023 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 2
+2024-08-27 12:09:36,023 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 3
+2024-08-27 12:09:36,023 DEBUG   SenderThread:689403 [sender.py:send():379] send: stats
+2024-08-27 12:09:36,024 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,024 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 3
+2024-08-27 12:09:36,025 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,025 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 3
+2024-08-27 12:09:36,025 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 4
+2024-08-27 12:09:36,026 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,027 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 4
+2024-08-27 12:09:36,027 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,028 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 4
+2024-08-27 12:09:36,028 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 5
+2024-08-27 12:09:36,028 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,029 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 5
+2024-08-27 12:09:36,030 DEBUG   SenderThread:689403 [sender.py:send():379] send: summary
+2024-08-27 12:09:36,033 INFO    SenderThread:689403 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:09:36,033 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,033 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 5
+2024-08-27 12:09:36,033 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 6
+2024-08-27 12:09:36,034 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,034 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 6
+2024-08-27 12:09:36,035 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,035 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 6
+2024-08-27 12:09:36,040 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:09:36,119 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 7
+2024-08-27 12:09:36,119 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:36,120 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 7
+2024-08-27 12:09:36,120 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:36,121 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 7
+2024-08-27 12:09:36,992 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:09:36,994 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/config.yaml
+2024-08-27 12:09:36,995 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:36,996 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/output.log
+2024-08-27 12:09:38,025 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 8
+2024-08-27 12:09:38,025 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:09:38,025 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:38,026 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 8
+2024-08-27 12:09:38,027 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:38,027 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 8
+2024-08-27 12:09:38,028 INFO    SenderThread:689403 [job_builder.py:build():318] Attempting to build job artifact
+2024-08-27 12:09:38,030 INFO    SenderThread:689403 [job_builder.py:_get_source_type():455] is repo sourced job
+2024-08-27 12:09:38,068 INFO    SenderThread:689403 [job_builder.py:build():431] adding wandb-job metadata file
+2024-08-27 12:09:38,118 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 9
+2024-08-27 12:09:38,119 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:38,119 DEBUG   SenderThread:689403 [sender.py:send():379] send: artifact
+2024-08-27 12:09:38,120 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 9
+2024-08-27 12:09:38,649 INFO    wandb-upload_1:689403 [upload_job.py:push():86] Skipped uploading /home/vdiaz/.local/share/wandb/artifacts/staging/tmp63u7lium
+2024-08-27 12:09:38,790 INFO    wandb-upload_2:689403 [upload_job.py:push():89] Uploaded file /tmp/tmpprbjop_2/wandb-job.json
+2024-08-27 12:09:38,993 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:09:39,002 INFO    Thread-12 :689403 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/output.log
+2024-08-27 12:09:39,443 INFO    SenderThread:689403 [sender.py:send_artifact():1468] sent artifact job-https___github.com_samuelperezdi_starsml.git_scripts_classification.py - {'id': 'QXJ0aWZhY3Q6MTE2NzkyMDQ4Nw==', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQxNzY4NjMyOA==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTE2NzkxMzQ3Mg==', 'versionIndex': 1}}}
+2024-08-27 12:09:39,443 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:39,444 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 9
+2024-08-27 12:09:39,445 INFO    SenderThread:689403 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-08-27 12:09:40,008 INFO    SenderThread:689403 [dir_watcher.py:finish():388] scan: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files
+2024-08-27 12:09:40,009 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/config.yaml config.yaml
+2024-08-27 12:09:40,009 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/conda-environment.yaml conda-environment.yaml
+2024-08-27 12:09:40,012 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-metadata.json wandb-metadata.json
+2024-08-27 12:09:40,012 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/requirements.txt requirements.txt
+2024-08-27 12:09:40,015 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json wandb-summary.json
+2024-08-27 12:09:40,015 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/output.log output.log
+2024-08-27 12:09:40,023 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png media/images/scatter_plot_1_1_9a9e3a51eb514590ce68.png
+2024-08-27 12:09:40,023 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_1_2_ff2fb9daef6275c7ea21.png media/images/histograms_1_2_ff2fb9daef6275c7ea21.png
+2024-08-27 12:09:40,024 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png media/images/confusion_matrix_1_3_c1114e20cd4276ed05e6.png
+2024-08-27 12:09:40,025 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png media/images/scatter_plot_2_6_d78d78e6499e077efd9f.png
+2024-08-27 12:09:40,026 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_2_7_6e1cfc39188c20186a59.png media/images/histograms_2_7_6e1cfc39188c20186a59.png
+2024-08-27 12:09:40,027 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png media/images/confusion_matrix_2_8_7cd2eb27bed36a903533.png
+2024-08-27 12:09:40,040 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_3_11_6625734be86eef353203.png media/images/scatter_plot_3_11_6625734be86eef353203.png
+2024-08-27 12:09:40,040 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_3_12_29793486548a4286f420.png media/images/histograms_3_12_29793486548a4286f420.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png media/images/confusion_matrix_3_13_dc704f8cd33db98a47d8.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png media/images/scatter_plot_4_16_66786a81751f0e3f65c3.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_4_17_b056304c0500974fed0b.png media/images/histograms_4_17_b056304c0500974fed0b.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_4_18_411377f3971dc94f8601.png media/images/confusion_matrix_4_18_411377f3971dc94f8601.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png media/images/scatter_plot_5_21_eeae1dd84973e48988ba.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/histograms_5_22_87c6333bc83fe9471107.png media/images/histograms_5_22_87c6333bc83fe9471107.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png media/images/confusion_matrix_5_23_3b879a74ef4d809d7eda.png
+2024-08-27 12:09:40,041 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 10
+2024-08-27 12:09:40,041 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:09:40,043 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:40,043 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 10
+2024-08-27 12:09:40,047 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:40,048 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 10
+2024-08-27 12:09:40,048 INFO    SenderThread:689403 [file_pusher.py:finish():172] shutting down file pusher
+2024-08-27 12:09:40,210 INFO    wandb-upload_0:689403 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/config.yaml
+2024-08-27 12:09:40,228 INFO    wandb-upload_2:689403 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/conda-environment.yaml
+2024-08-27 12:09:40,231 INFO    wandb-upload_1:689403 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/requirements.txt
+2024-08-27 12:09:40,276 INFO    wandb-upload_3:689403 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/wandb-summary.json
+2024-08-27 12:09:40,296 INFO    wandb-upload_4:689403 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/files/output.log
+2024-08-27 12:09:40,496 INFO    Thread-11 :689403 [sender.py:transition_state():614] send defer: 11
+2024-08-27 12:09:40,497 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:40,497 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 11
+2024-08-27 12:09:40,498 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:40,499 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 11
+2024-08-27 12:09:40,499 INFO    SenderThread:689403 [file_pusher.py:join():178] waiting for file pusher
+2024-08-27 12:09:40,502 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 12
+2024-08-27 12:09:40,502 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:40,503 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 12
+2024-08-27 12:09:40,503 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:40,504 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 12
+2024-08-27 12:09:40,504 INFO    SenderThread:689403 [file_stream.py:finish():614] file stream finish called
+2024-08-27 12:09:40,559 INFO    SenderThread:689403 [file_stream.py:finish():618] file stream finish is done
+2024-08-27 12:09:40,559 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 13
+2024-08-27 12:09:40,560 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:40,560 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 13
+2024-08-27 12:09:40,561 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:40,561 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 13
+2024-08-27 12:09:40,561 INFO    SenderThread:689403 [sender.py:transition_state():614] send defer: 14
+2024-08-27 12:09:40,562 DEBUG   SenderThread:689403 [sender.py:send():379] send: final
+2024-08-27 12:09:40,562 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:09:40,562 DEBUG   SenderThread:689403 [sender.py:send():379] send: footer
+2024-08-27 12:09:40,563 INFO    HandlerThread:689403 [handler.py:handle_request_defer():172] handle defer: 14
+2024-08-27 12:09:40,564 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:09:40,565 INFO    SenderThread:689403 [sender.py:send_request_defer():610] handle sender defer: 14
+2024-08-27 12:09:40,565 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:09:40,566 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:09:40,566 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:09:40,567 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: server_info
+2024-08-27 12:09:40,568 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:09:40,568 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: get_summary
+2024-08-27 12:09:40,569 DEBUG   SenderThread:689403 [sender.py:send_request():406] send_request: server_info
+2024-08-27 12:09:40,570 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: sampled_history
+2024-08-27 12:09:40,573 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: internal_messages
+2024-08-27 12:09:40,623 INFO    MainThread:689403 [wandb_run.py:_footer_history_summary_info():3936] rendering history
+2024-08-27 12:09:40,624 INFO    MainThread:689403 [wandb_run.py:_footer_history_summary_info():3968] rendering summary
+2024-08-27 12:09:40,625 INFO    MainThread:689403 [wandb_run.py:_footer_sync_info():3895] logging synced files
+2024-08-27 12:09:40,626 DEBUG   HandlerThread:689403 [handler.py:handle_request():146] handle_request: shutdown
+2024-08-27 12:09:40,626 INFO    HandlerThread:689403 [handler.py:finish():866] shutting down handler
+2024-08-27 12:09:41,569 INFO    WriterThread:689403 [datastore.py:close():296] close: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120915-pvzznizc/run-pvzznizc.wandb
+2024-08-27 12:09:41,623 INFO    SenderThread:689403 [sender.py:finish():1546] shutting down sender
+2024-08-27 12:09:41,623 INFO    SenderThread:689403 [file_pusher.py:finish():172] shutting down file pusher
+2024-08-27 12:09:41,623 INFO    SenderThread:689403 [file_pusher.py:join():178] waiting for file pusher

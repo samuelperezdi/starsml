@@ -1,0 +1,28 @@
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, results_info, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 36, in plot_subsets_experiment_wandb
+    sc = ax.scatter(y_test_prob, df_pos['p_i'], c=df_pos['p_any'], cmap='coolwarm_r', s=6)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/matplotlib/__init__.py", line 1465, in inner
+    return func(ax, *map(sanitize_sequence, args), **kwargs)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/matplotlib/axes/_axes.py", line 4655, in scatter
+    raise ValueError("x and y must be the same size")
+ValueError: x and y must be the same size
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, results_info, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 36, in plot_subsets_experiment_wandb
+    sc = ax.scatter(y_test_prob, df_pos['p_i'], c=df_pos['p_any'], cmap='coolwarm_r', s=6)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/matplotlib/__init__.py", line 1465, in inner
+    return func(ax, *map(sanitize_sequence, args), **kwargs)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/matplotlib/axes/_axes.py", line 4655, in scatter
+    raise ValueError("x and y must be the same size")
+ValueError: x and y must be the same size

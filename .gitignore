@@ -2,9 +2,14 @@
 *.fits
 *.vot
 *.pdf
+*.parquet
+*.log
 
 data/
 out_data/
 models/
 figures/
 __pycache__/
+.vscode/
+.DS_Store
+*.pyc

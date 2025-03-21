@@ -1,0 +1,192 @@
+2024-08-27 12:02:52,784 INFO    StreamThr :687746 [internal.py:wandb_internal():86] W&B internal server running at pid: 687746, started at: 2024-08-27 12:02:52.782383
+2024-08-27 12:02:52,785 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: status
+2024-08-27 12:02:52,786 INFO    WriterThread:687746 [datastore.py:open_for_write():87] open: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/run-xa2qxus2.wandb
+2024-08-27 12:02:52,789 DEBUG   SenderThread:687746 [sender.py:send():379] send: header
+2024-08-27 12:02:52,828 DEBUG   SenderThread:687746 [sender.py:send():379] send: run
+2024-08-27 12:02:53,008 INFO    SenderThread:687746 [dir_watcher.py:__init__():211] watching files in: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files
+2024-08-27 12:02:53,008 INFO    SenderThread:687746 [sender.py:_start_run_threads():1124] run started: xa2qxus2 with start time 1724774572.782186
+2024-08-27 12:02:53,028 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: check_version
+2024-08-27 12:02:53,029 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: check_version
+2024-08-27 12:02:53,079 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: run_start
+2024-08-27 12:02:53,080 DEBUG   HandlerThread:687746 [system_info.py:__init__():26] System info init
+2024-08-27 12:02:53,080 DEBUG   HandlerThread:687746 [system_info.py:__init__():41] System info init done
+2024-08-27 12:02:53,080 INFO    HandlerThread:687746 [system_monitor.py:start():194] Starting system monitor
+2024-08-27 12:02:53,081 INFO    SystemMonitor:687746 [system_monitor.py:_start():158] Starting system asset monitoring threads
+2024-08-27 12:02:53,081 INFO    HandlerThread:687746 [system_monitor.py:probe():214] Collecting system info
+2024-08-27 12:02:53,082 INFO    SystemMonitor:687746 [interfaces.py:start():190] Started cpu monitoring
+2024-08-27 12:02:53,084 INFO    SystemMonitor:687746 [interfaces.py:start():190] Started disk monitoring
+2024-08-27 12:02:53,085 INFO    SystemMonitor:687746 [interfaces.py:start():190] Started memory monitoring
+2024-08-27 12:02:53,086 INFO    SystemMonitor:687746 [interfaces.py:start():190] Started network monitoring
+2024-08-27 12:02:53,097 DEBUG   HandlerThread:687746 [system_info.py:probe():150] Probing system
+2024-08-27 12:02:53,102 DEBUG   HandlerThread:687746 [system_info.py:_probe_git():135] Probing git
+2024-08-27 12:02:53,137 DEBUG   HandlerThread:687746 [system_info.py:_probe_git():143] Probing git done
+2024-08-27 12:02:53,137 DEBUG   HandlerThread:687746 [system_info.py:probe():198] Probing system done
+2024-08-27 12:02:53,137 DEBUG   HandlerThread:687746 [system_monitor.py:probe():223] {'os': 'Linux-4.18.0-553.16.1.el8_10.x86_64-x86_64-with-glibc2.28', 'python': '3.9.19', 'heartbeatAt': '2024-08-27T16:02:53.097235', 'startedAt': '2024-08-27T16:02:52.754405', 'docker': None, 'cuda': None, 'args': ('plot', '--plot-type', 'wandb_experiment', '--model-path', 'models/lgbm_default_nolog_none_seed42_20240826_132839'), 'state': 'running', 'program': '/data/csc2_gums/starsml/starsml/scripts/classification.py', 'codePathLocal': 'classification.py', 'codePath': 'scripts/classification.py', 'git': {'remote': 'https://github.com/samuelperezdi/starsml.git', 'commit': '09b8bc4c1e9d09f0594349815b6cd984ae1763ad'}, 'email': None, 'root': '/data/csc2_gums/starsml/starsml', 'host': 'zumbador.cfa.harvard.edu', 'username': 'vdiaz', 'executable': '/scratch1/vdiaz/.conda/envs/new/bin/python3', 'cpu_count': 4, 'cpu_count_logical': 4, 'cpu_freq': {'current': 2.7514999999999996, 'min': 2800.0, 'max': 2800.0}, 'cpu_freq_per_core': [{'current': 2.8, 'min': 2800.0, 'max': 2800.0}, {'current': 2.8, 'min': 2800.0, 'max': 2800.0}, {'current': 2.8, 'min': 2800.0, 'max': 2800.0}, {'current': 2.606, 'min': 2800.0, 'max': 2800.0}], 'disk': {'/': {'total': 95.56354522705078, 'used': 14.878978729248047}}, 'memory': {'total': 3.5040740966796875}}
+2024-08-27 12:02:53,138 INFO    HandlerThread:687746 [system_monitor.py:probe():224] Finished collecting system info
+2024-08-27 12:02:53,138 INFO    HandlerThread:687746 [system_monitor.py:probe():227] Publishing system info
+2024-08-27 12:02:53,138 DEBUG   HandlerThread:687746 [system_info.py:_save_conda():207] Saving list of conda packages installed into the current environment
+2024-08-27 12:02:54,012 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/conda-environment.yaml
+2024-08-27 12:02:56,474 DEBUG   HandlerThread:687746 [system_info.py:_save_conda():222] Saving conda packages done
+2024-08-27 12:02:56,478 INFO    HandlerThread:687746 [system_monitor.py:probe():229] Finished publishing system info
+2024-08-27 12:02:56,480 DEBUG   SenderThread:687746 [sender.py:send():379] send: files
+2024-08-27 12:02:56,480 INFO    SenderThread:687746 [sender.py:_save_file():1390] saving file wandb-metadata.json with policy now
+2024-08-27 12:02:56,628 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: python_packages
+2024-08-27 12:02:56,629 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: python_packages
+2024-08-27 12:02:56,630 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: stop_status
+2024-08-27 12:02:56,630 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: internal_messages
+2024-08-27 12:02:56,632 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: stop_status
+2024-08-27 12:02:56,683 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: partial_history
+2024-08-27 12:02:56,818 DEBUG   SenderThread:687746 [sender.py:send():379] send: telemetry
+2024-08-27 12:02:56,818 DEBUG   SenderThread:687746 [sender.py:send():379] send: history
+2024-08-27 12:02:56,818 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: summary_record
+2024-08-27 12:02:56,850 INFO    SenderThread:687746 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:02:57,041 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/conda-environment.yaml
+2024-08-27 12:02:57,041 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/requirements.txt
+2024-08-27 12:02:57,042 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-metadata.json
+2024-08-27 12:02:57,042 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-summary.json
+2024-08-27 12:02:57,857 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:02:57,936 DEBUG   SenderThread:687746 [sender.py:send():379] send: exit
+2024-08-27 12:02:57,936 INFO    SenderThread:687746 [sender.py:send_exit():586] handling exit code: 1
+2024-08-27 12:02:57,936 INFO    SenderThread:687746 [sender.py:send_exit():588] handling runtime: 4
+2024-08-27 12:02:57,939 INFO    SenderThread:687746 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:02:57,939 INFO    SenderThread:687746 [sender.py:send_exit():594] send defer
+2024-08-27 12:02:57,939 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,940 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 0
+2024-08-27 12:02:57,940 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,941 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 0
+2024-08-27 12:02:57,941 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 1
+2024-08-27 12:02:57,941 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,941 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 1
+2024-08-27 12:02:57,941 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,942 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 1
+2024-08-27 12:02:57,942 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 2
+2024-08-27 12:02:57,942 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,942 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 2
+2024-08-27 12:02:57,942 INFO    HandlerThread:687746 [system_monitor.py:finish():203] Stopping system monitor
+2024-08-27 12:02:57,942 DEBUG   SystemMonitor:687746 [system_monitor.py:_start():172] Starting system metrics aggregation loop
+2024-08-27 12:02:57,943 DEBUG   SystemMonitor:687746 [system_monitor.py:_start():179] Finished system metrics aggregation loop
+2024-08-27 12:02:57,943 DEBUG   SystemMonitor:687746 [system_monitor.py:_start():183] Publishing last batch of metrics
+2024-08-27 12:02:57,943 INFO    HandlerThread:687746 [interfaces.py:finish():202] Joined cpu monitor
+2024-08-27 12:02:57,945 INFO    HandlerThread:687746 [interfaces.py:finish():202] Joined disk monitor
+2024-08-27 12:02:57,946 INFO    HandlerThread:687746 [interfaces.py:finish():202] Joined memory monitor
+2024-08-27 12:02:57,946 INFO    HandlerThread:687746 [interfaces.py:finish():202] Joined network monitor
+2024-08-27 12:02:57,948 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,948 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 2
+2024-08-27 12:02:57,948 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 3
+2024-08-27 12:02:57,948 DEBUG   SenderThread:687746 [sender.py:send():379] send: stats
+2024-08-27 12:02:57,949 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,949 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 3
+2024-08-27 12:02:57,950 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,950 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 3
+2024-08-27 12:02:57,951 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 4
+2024-08-27 12:02:57,951 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,951 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 4
+2024-08-27 12:02:57,952 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,952 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 4
+2024-08-27 12:02:57,952 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 5
+2024-08-27 12:02:57,952 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,953 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 5
+2024-08-27 12:02:57,954 DEBUG   SenderThread:687746 [sender.py:send():379] send: summary
+2024-08-27 12:02:57,956 INFO    SenderThread:687746 [sender.py:_save_file():1390] saving file wandb-summary.json with policy end
+2024-08-27 12:02:57,957 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,957 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 5
+2024-08-27 12:02:57,957 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 6
+2024-08-27 12:02:57,957 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:57,957 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 6
+2024-08-27 12:02:57,957 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:57,958 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 6
+2024-08-27 12:02:57,962 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:02:58,038 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 7
+2024-08-27 12:02:58,038 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:58,039 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/config.yaml
+2024-08-27 12:02:58,039 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 7
+2024-08-27 12:02:58,039 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-summary.json
+2024-08-27 12:02:58,040 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:58,041 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_created():271] file/dir created: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/output.log
+2024-08-27 12:02:58,041 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 7
+2024-08-27 12:02:58,933 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:02:59,944 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 8
+2024-08-27 12:02:59,945 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:02:59,945 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:02:59,946 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 8
+2024-08-27 12:02:59,947 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:02:59,947 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 8
+2024-08-27 12:02:59,947 INFO    SenderThread:687746 [job_builder.py:build():318] Attempting to build job artifact
+2024-08-27 12:02:59,949 INFO    SenderThread:687746 [job_builder.py:_get_source_type():455] is repo sourced job
+2024-08-27 12:02:59,987 INFO    SenderThread:687746 [job_builder.py:build():431] adding wandb-job metadata file
+2024-08-27 12:03:00,033 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 9
+2024-08-27 12:03:00,034 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:00,034 DEBUG   SenderThread:687746 [sender.py:send():379] send: artifact
+2024-08-27 12:03:00,035 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 9
+2024-08-27 12:03:00,041 INFO    Thread-12 :687746 [dir_watcher.py:_on_file_modified():288] file/dir modified: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/output.log
+2024-08-27 12:03:00,934 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:03:01,229 INFO    wandb-upload_0:687746 [upload_job.py:push():131] Uploaded file /tmp/tmpq60v4fd0wandb/viiofj37-wandb-metadata.json
+2024-08-27 12:03:01,621 INFO    wandb-upload_1:687746 [upload_job.py:push():86] Skipped uploading /home/vdiaz/.local/share/wandb/artifacts/staging/tmp1iptr9or
+2024-08-27 12:03:01,724 INFO    wandb-upload_0:687746 [upload_job.py:push():89] Uploaded file /tmp/tmpkxr0gqeg/wandb-job.json
+2024-08-27 12:03:02,454 INFO    SenderThread:687746 [sender.py:send_artifact():1468] sent artifact job-https___github.com_samuelperezdi_starsml.git_scripts_classification.py - {'id': 'QXJ0aWZhY3Q6MTE2NzkxMzQ3Mg==', 'state': 'PENDING', 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjQxNzY4NjMyOA==', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MTE2NzkwNzEyMg==', 'versionIndex': 0}}}
+2024-08-27 12:03:02,454 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:02,454 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 9
+2024-08-27 12:03:02,455 INFO    SenderThread:687746 [dir_watcher.py:finish():358] shutting down directory watcher
+2024-08-27 12:03:03,046 INFO    SenderThread:687746 [dir_watcher.py:finish():388] scan: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files
+2024-08-27 12:03:03,047 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/config.yaml config.yaml
+2024-08-27 12:03:03,048 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/conda-environment.yaml conda-environment.yaml
+2024-08-27 12:03:03,051 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-metadata.json wandb-metadata.json
+2024-08-27 12:03:03,051 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/requirements.txt requirements.txt
+2024-08-27 12:03:03,053 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-summary.json wandb-summary.json
+2024-08-27 12:03:03,056 INFO    SenderThread:687746 [dir_watcher.py:finish():402] scan save: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/output.log output.log
+2024-08-27 12:03:03,059 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 10
+2024-08-27 12:03:03,059 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:03:03,059 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:03,062 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 10
+2024-08-27 12:03:03,063 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: status_report
+2024-08-27 12:03:03,063 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:03,064 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 10
+2024-08-27 12:03:03,065 INFO    SenderThread:687746 [file_pusher.py:finish():172] shutting down file pusher
+2024-08-27 12:03:03,245 INFO    wandb-upload_0:687746 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/conda-environment.yaml
+2024-08-27 12:03:03,307 INFO    wandb-upload_1:687746 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/config.yaml
+2024-08-27 12:03:03,364 INFO    wandb-upload_3:687746 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/wandb-summary.json
+2024-08-27 12:03:03,364 INFO    wandb-upload_2:687746 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/requirements.txt
+2024-08-27 12:03:03,365 INFO    wandb-upload_4:687746 [upload_job.py:push():131] Uploaded file /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/files/output.log
+2024-08-27 12:03:03,566 INFO    Thread-11 :687746 [sender.py:transition_state():614] send defer: 11
+2024-08-27 12:03:03,566 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:03,567 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 11
+2024-08-27 12:03:03,567 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:03,568 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 11
+2024-08-27 12:03:03,568 INFO    SenderThread:687746 [file_pusher.py:join():178] waiting for file pusher
+2024-08-27 12:03:03,569 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 12
+2024-08-27 12:03:03,570 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:03,571 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 12
+2024-08-27 12:03:03,571 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:03,572 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 12
+2024-08-27 12:03:03,572 INFO    SenderThread:687746 [file_stream.py:finish():614] file stream finish called
+2024-08-27 12:03:03,626 INFO    SenderThread:687746 [file_stream.py:finish():618] file stream finish is done
+2024-08-27 12:03:03,627 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 13
+2024-08-27 12:03:03,627 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:03,627 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 13
+2024-08-27 12:03:03,628 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:03,628 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 13
+2024-08-27 12:03:03,628 INFO    SenderThread:687746 [sender.py:transition_state():614] send defer: 14
+2024-08-27 12:03:03,629 DEBUG   SenderThread:687746 [sender.py:send():379] send: final
+2024-08-27 12:03:03,629 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: defer
+2024-08-27 12:03:03,630 DEBUG   SenderThread:687746 [sender.py:send():379] send: footer
+2024-08-27 12:03:03,631 INFO    HandlerThread:687746 [handler.py:handle_request_defer():172] handle defer: 14
+2024-08-27 12:03:03,632 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: defer
+2024-08-27 12:03:03,633 INFO    SenderThread:687746 [sender.py:send_request_defer():610] handle sender defer: 14
+2024-08-27 12:03:03,633 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:03:03,634 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: poll_exit
+2024-08-27 12:03:03,634 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:03:03,635 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: server_info
+2024-08-27 12:03:03,635 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: poll_exit
+2024-08-27 12:03:03,636 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: get_summary
+2024-08-27 12:03:03,636 DEBUG   SenderThread:687746 [sender.py:send_request():406] send_request: server_info
+2024-08-27 12:03:03,637 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: sampled_history
+2024-08-27 12:03:03,640 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: internal_messages
+2024-08-27 12:03:03,684 INFO    MainThread:687746 [wandb_run.py:_footer_history_summary_info():3936] rendering history
+2024-08-27 12:03:03,684 INFO    MainThread:687746 [wandb_run.py:_footer_history_summary_info():3968] rendering summary
+2024-08-27 12:03:03,684 INFO    MainThread:687746 [wandb_run.py:_footer_sync_info():3895] logging synced files
+2024-08-27 12:03:03,685 DEBUG   HandlerThread:687746 [handler.py:handle_request():146] handle_request: shutdown
+2024-08-27 12:03:03,686 INFO    HandlerThread:687746 [handler.py:finish():866] shutting down handler
+2024-08-27 12:03:04,636 INFO    WriterThread:687746 [datastore.py:close():296] close: /data/csc2_gums/starsml/starsml/scripts/wandb/run-20240827_120252-xa2qxus2/run-xa2qxus2.wandb
+2024-08-27 12:03:04,684 INFO    SenderThread:687746 [sender.py:finish():1546] shutting down sender
+2024-08-27 12:03:04,684 INFO    SenderThread:687746 [file_pusher.py:finish():172] shutting down file pusher
+2024-08-27 12:03:04,684 INFO    SenderThread:687746 [file_pusher.py:join():178] waiting for file pusher

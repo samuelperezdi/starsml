@@ -1,0 +1,40 @@
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 20, in plot_subsets_experiment_wandb
+    X_train, X_test, y_train, y_test = preprocess(df_pos_subset, df_neg_subset, subset_type)
+  File "/data/csc2_gums/starsml/starsml/src/utils.py", line 113, in preprocess
+    X_pos, cat_features_pos = transform_features(df_pos, log_transform, model_type, feature_names)
+  File "/data/csc2_gums/starsml/starsml/src/utils.py", line 64, in transform_features
+    encoded_categorical = encoder.fit_transform(df[categorical_features])
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/frame.py", line 4108, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6200, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6249, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['yangetal_gcs_class', 'yangetal_training_class', 'perezdiazetal_class',\n       'phot_variable_flag'],\n      dtype='object')] are in the [columns]"
+Traceback (most recent call last):
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 117, in <module>
+    main(args)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 99, in main
+    plot_results(args.plot_type, args.model_path, df_pos, df_neg, args.project_name, args.range)
+  File "/data/csc2_gums/starsml/starsml/scripts/classification.py", line 68, in plot_results
+    plot_subsets_experiment_wandb(results_exp, df_pos, df_neg, project_name)
+  File "/data/csc2_gums/starsml/starsml/src/wandb_utils.py", line 20, in plot_subsets_experiment_wandb
+    X_train, X_test, y_train, y_test = preprocess(df_pos_subset, df_neg_subset, subset_type)
+  File "/data/csc2_gums/starsml/starsml/src/utils.py", line 113, in preprocess
+    X_pos, cat_features_pos = transform_features(df_pos, log_transform, model_type, feature_names)
+  File "/data/csc2_gums/starsml/starsml/src/utils.py", line 64, in transform_features
+    encoded_categorical = encoder.fit_transform(df[categorical_features])
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/frame.py", line 4108, in __getitem__
+    indexer = self.columns._get_indexer_strict(key, "columns")[1]
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6200, in _get_indexer_strict
+    self._raise_if_missing(keyarr, indexer, axis_name)
+  File "/scratch1/vdiaz/.conda/envs/new/lib/python3.9/site-packages/pandas/core/indexes/base.py", line 6249, in _raise_if_missing
+    raise KeyError(f"None of [{key}] are in the [{axis_name}]")
+KeyError: "None of [Index(['yangetal_gcs_class', 'yangetal_training_class', 'perezdiazetal_class',\n       'phot_variable_flag'],\n      dtype='object')] are in the [columns]"

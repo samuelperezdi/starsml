@@ -1,0 +1,28 @@
+# /bin/sh
+# ----------------Parameters---------------------- #
+#$ -S /bin/sh
+#$ -pe mthread 2
+#$ -q sThM.q
+#$ -l mres=32G,h_data=16G,h_vmem=16G,himem
+#$ -cwd
+#$ -j y
+#$ -N crossmatching
+#$ -o crossmatching.log
+#$ -m bea
+#$ -M vperezdiaz@cfa.harvard.edu
+#
+# ----------------Modules------------------------- #
+#
+# ----------------Your Commands------------------- #
+#
+echo + `date` job $JOB_NAME started in $QUEUE with jobID=$JOB_ID on $HOSTNAME
+echo + NSLOTS = $NSLOTS
+#
+
+module load tools/conda
+start-conda
+conda activate starsml
+python3 apply.py
+
+#
+echo = `date` job $JOB_NAME done
