@@ -17,4 +17,4 @@ __pycache__/
 scripts/wandb/
 
 # system files
-*.DS_Store
+.DS_Store
