@@ -1,0 +1,29 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.9.19
+    cli_version: 0.16.6
+    framework: lightgbm
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1724774572.0
+    t:
+      1:
+      - 5
+      - 8
+      - 53
+      - 55
+      2:
+      - 5
+      - 8
+      - 53
+      - 55
+      3:
+      - 23
+      4: 3.9.19
+      5: 0.16.6
+      8:
+      - 5
+      13: linux-x86_64

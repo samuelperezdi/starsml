@@ -1,0 +1,66 @@
+{
+    "os": "Linux-4.18.0-553.16.1.el8_10.x86_64-x86_64-with-glibc2.28",
+    "python": "3.9.19",
+    "heartbeatAt": "2024-08-27T15:56:41.306459",
+    "startedAt": "2024-08-27T15:56:40.805243",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "plot",
+        "--plot-type",
+        "wandb_experiment",
+        "--model-path",
+        "models/lgbm_default_nolog_none_seed42_20240826_132839"
+    ],
+    "state": "running",
+    "program": "/data/csc2_gums/starsml/starsml/scripts/classification.py",
+    "codePathLocal": "classification.py",
+    "codePath": "scripts/classification.py",
+    "git": {
+        "remote": "https://github.com/samuelperezdi/starsml.git",
+        "commit": "09b8bc4c1e9d09f0594349815b6cd984ae1763ad"
+    },
+    "email": null,
+    "root": "/data/csc2_gums/starsml/starsml",
+    "host": "zumbador.cfa.harvard.edu",
+    "username": "vdiaz",
+    "executable": "/scratch1/vdiaz/.conda/envs/new/bin/python3",
+    "cpu_count": 4,
+    "cpu_count_logical": 4,
+    "cpu_freq": {
+        "current": 2.7485,
+        "min": 2800.0,
+        "max": 2800.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2.8,
+            "min": 2800.0,
+            "max": 2800.0
+        },
+        {
+            "current": 2.594,
+            "min": 2800.0,
+            "max": 2800.0
+        },
+        {
+            "current": 2.8,
+            "min": 2800.0,
+            "max": 2800.0
+        },
+        {
+            "current": 2.8,
+            "min": 2800.0,
+            "max": 2800.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 95.56354522705078,
+            "used": 14.878974914550781
+        }
+    },
+    "memory": {
+        "total": 3.5040740966796875
+    }
+}
