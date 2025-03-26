@@ -18,3 +18,4 @@ scripts/wandb/
 
 # system files
 .DS_Store
+reqs.txt
