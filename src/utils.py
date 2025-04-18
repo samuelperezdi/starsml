@@ -18,7 +18,7 @@ from datetime import datetime
 import pandas as pd
 from scipy.stats import loguniform, uniform
 
-from hyperopt import hp, tpe, fmin, Trials, STATUS_OK, rand
+#from hyperopt import hp, tpe, fmin, Trials, STATUS_OK, rand
 from sklearn.model_selection import cross_val_score
 from functools import partial
 
