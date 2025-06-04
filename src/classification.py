@@ -64,6 +64,8 @@ def get_match_label_advanced(df, p_threshold=0.35):
     
     # A source is labeled as a match (label = 1) if both the position and ML score criteria are met.
     df_new['label'] = 0
+    df_new['flag_sep_ok'] = 0
+    df_new.loc[pos_mask, 'flag_sep_ok'] = 1
     df_new.loc[pos_mask & (df_new['p_match_ind'] > p_threshold), 'label'] = 1
     
     return df_new
